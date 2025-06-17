@@ -15,12 +15,24 @@ public class ProfileDAO {
     public ProfileDAO() {
         this.profiles = new ConcurrentHashMap<>();
         this.idStore = new AtomicLong();
+
+        //Генерируем список пользователей
+        int i=0;
+        while (i < 10) {
+            Profile profile = new Profile();
+            profile.setId(idStore.getAndIncrement());
+            profile.setName("User-" + ++i);
+            profile.setEmail("user" + i + "@email.com");
+            profile.setInfo("I'm a user №" + i);
+            profiles.put(profile.getId(), profile);
+        }
     }
 
     public Profile createProfile(Profile profile) {
         long id = idStore.getAndIncrement();
         profile.setId(id);
         profiles.put(id, profile);
+        System.out.println(profiles.values());
         return profile;
     }
     public void updateProfile(Profile profile) {

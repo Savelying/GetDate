@@ -19,7 +19,7 @@ public class GetDateClient {
                 String input = scanner.nextLine();
                 outStream.writeUTF(input);
                 String output = inStream.readUTF();
-                System.out.println("Server send: " + output);
+                System.out.println(output);
             }
         }
     }
