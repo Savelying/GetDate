@@ -7,10 +7,14 @@ import java.util.List;
 import java.util.Optional;
 
 public class ProfileService {
-    private final ProfileDAO profileDAO;
+    private final ProfileDAO profileDAO = ProfileDAO.getInstance();
+    private final static ProfileService instance = new ProfileService();
 
-    public ProfileService(ProfileDAO profileDAO) {
-        this.profileDAO = profileDAO;
+    private ProfileService() {
+    }
+
+    public static ProfileService getInstance() {
+        return instance;
     }
 
     public Profile createProfile(Profile profile) {

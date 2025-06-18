@@ -3,6 +3,7 @@ package ru.savelying.getdate.controller;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.service.ProfileService;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ProfileControl {
@@ -10,10 +11,6 @@ public class ProfileControl {
 
     public ProfileControl(ProfileService profileService) {
         this.profileService = profileService;
-    }
-
-    public String work(String input) {
-        return null;
     }
 
     public String create(String create) {
@@ -59,22 +56,31 @@ public class ProfileControl {
         return "Deleted profile №" + id;
     }
 
-    public String search(String search) {
-        String[] params = search.split(", ");
-        if (params.length != 1) return "Bad Request: need 1 parameter to search a profile";
-        Long id;
-        try {
-            id = Long.parseLong(params[0]);
-        } catch (NumberFormatException e) {
-            return "Bad Request: need a number for the ID";
-        }
-        Optional<Profile> profileOptional = profileService.getProfile(id);
-        if (profileOptional.isEmpty()) return "Profile does not exist";
-        Profile profile = profileOptional.get();
-        return "Finded " + profile.toString();
+    public Optional<Profile> search(Long id) {
+        return profileService.getProfile(id);
     }
 
-    public String all() {
-        return "All profiles:\n" + profileService.getProfiles().toString()/* + "\n"*/;
+    public List<Profile> all() {
+        return profileService.getProfiles();
     }
+
+
+//    public String search(String search) {
+//        String[] params = search.split(", ");
+//        if (params.length != 1) return "Bad Request: need 1 parameter to search a profile";
+//        Long id;
+//        try {
+//            id = Long.parseLong(params[0]);
+//        } catch (NumberFormatException e) {
+//            return "Bad Request: need a number for the ID";
+//        }
+//        Optional<Profile> profileOptional = profileService.getProfile(id);
+//        if (profileOptional.isEmpty()) return "Profile does not exist";
+//        Profile profile = profileOptional.get();
+//        return "Finded " + profile.toString();
+//    }
+//
+//    public String all() {
+//        return "All profiles:\n" + profileService.getProfiles().toString()/* + "\n"*/;
+//    }
 }

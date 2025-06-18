@@ -9,8 +9,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ProfileDAO {
+    private final static ProfileDAO instance = new ProfileDAO();
     private final ConcurrentHashMap<Long, Profile> profiles;
     private final AtomicLong idStore;
+
+    public static ProfileDAO getInstance() {
+        return instance;
+    }
 
     public ProfileDAO() {
         this.profiles = new ConcurrentHashMap<>();
