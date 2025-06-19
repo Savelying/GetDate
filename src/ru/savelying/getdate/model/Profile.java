@@ -5,6 +5,7 @@ public class Profile {
     private String name;
     private String email;
     private String info;
+    private Gender gender;
 
     public Long getId() {
         return id;
@@ -36,6 +37,14 @@ public class Profile {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 
     @Override

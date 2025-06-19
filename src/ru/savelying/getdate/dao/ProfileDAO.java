@@ -1,5 +1,6 @@
 package ru.savelying.getdate.dao;
 
+import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 
 import java.util.ArrayList;
@@ -23,12 +24,13 @@ public class ProfileDAO {
 
         //Генерируем список пользователей
         int i=0;
-        while (i < 10) {
+        while (i <= 10) {
             Profile profile = new Profile();
             profile.setId(idStore.getAndIncrement());
-            profile.setName("User-" + ++i);
+            profile.setName("User-" + i);
             profile.setEmail("user" + i + "@email.com");
-            profile.setInfo("I'm a user №" + i);
+            profile.setInfo("I'm a user №" + i++);
+            profile.setGender(Gender.OTHER);
             profiles.put(profile.getId(), profile);
         }
     }
