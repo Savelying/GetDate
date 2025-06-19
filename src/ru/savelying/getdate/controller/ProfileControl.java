@@ -19,17 +19,10 @@ public class ProfileControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        config.getServletContext().setAttribute("genders", Gender.values());
-//        if (config.getServletContext().getAttribute("genders") == null) config.getServletContext().setAttribute("genders", Gender.values());
-    }
-
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String id = req.getParameter("id");
         String toURL = "/not found";
-        if (id != null) {
-            Optional<Profile> profile = profileService.getProfile(Long.parseLong(id));
+        if (req.getParameter("id") != null) {
+            Optional<Profile> profile = profileService.getProfile(Long.parseLong(req.getParameter("id")));
             if (profile.isPresent()) {
                 toURL = "/WEB-INF/jsp/profile.jsp";
                 req.setAttribute("profile", profile.get());
@@ -40,21 +33,37 @@ public class ProfileControl extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Profile profile = getProfile(req);
+        profileService.createProfile(profile);
+        resp.sendRedirect("/profile?id=" + profile.getId());
+    }
+
+    @Override
+    protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        Profile profile = getProfile(req);
+        profileService.updateProfile(profile);
+        resp.sendRedirect("/profile?id=" + profile.getId());
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        if (!req.getParameter("id").isBlank()) {
+            profileService.deleteProfile(Long.parseLong(req.getParameter("id")));
+        }
+        resp.sendRedirect("/registration");
+    }
+
+    private Profile getProfile(HttpServletRequest req) {
         Profile profile = new Profile();
+        if (!req.getParameter("id").isBlank()) profile.setId(Long.parseLong(req.getParameter("id")));
         profile.setEmail(req.getParameter("email"));
         profile.setName(req.getParameter("name"));
         profile.setInfo(req.getParameter("info"));
         profile.setGender(Gender.valueOf(req.getParameter("gender")));
-        if (!req.getParameter("id").isBlank()) {
-            profile.setId(Long.parseLong(req.getParameter("id")));
-            profileService.updateProfile(profile);
-        } else {
-            profileService.createProfile(profile);
-        }
-        resp.sendRedirect("/profile?id=" + profile.getId());
+        return profile;
     }
 
-    //    public String create(String create) {
+//    public String create(String create) {
 //        String[] params = create.split(", ");
 //        if (params.length != 3) return "Bad Request: need 3 parameters to create a profile";
 //        Profile profile = new Profile();

@@ -16,12 +16,6 @@ import java.io.IOException;
 public class RegControl extends HttpServlet {
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        config.getServletContext().setAttribute("genders", Gender.values());
-//        if (config.getServletContext().getAttribute("genders") == null) config.getServletContext().setAttribute("genders", Gender.values());
-    }
-
-    @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.setAttribute("profile", new Profile());
         req.getRequestDispatcher("/WEB-INF/jsp/profile.jsp").forward(req, resp);
