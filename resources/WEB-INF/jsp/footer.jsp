@@ -2,6 +2,6 @@
 <html lang="en">
 <div>
     <hr>
-    <a style="color: grey">All rights reserved 2025</a>
+    <a style="color: grey">${requestScope.wordBundle.getWord("all-rights-reserved")} 2025</a>
 </div>
 </html>

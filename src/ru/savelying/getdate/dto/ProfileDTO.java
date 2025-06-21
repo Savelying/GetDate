@@ -1,14 +1,17 @@
-package ru.savelying.getdate.model;
+package ru.savelying.getdate.dto;
+
+import ru.savelying.getdate.model.Gender;
 
 import java.time.LocalDate;
 
-public class Profile {
+public class ProfileDTO {
     private Long id;
     private String name;
     private String email;
     private String info;
     private Gender gender;
     private LocalDate birthDate;
+    private Integer age;
 
     public Long getId() {
         return id;
@@ -58,13 +61,11 @@ public class Profile {
         this.birthDate = birthDate;
     }
 
-    @Override
-    public String toString() {
-        return "Profile{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", info='" + info + '\'' +
-                '}';
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
     }
 }

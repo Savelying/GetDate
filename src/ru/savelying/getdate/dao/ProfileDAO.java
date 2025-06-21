@@ -3,6 +3,7 @@ package ru.savelying.getdate.dao;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class ProfileDAO {
             profile.setId(idStore.getAndIncrement());
             profile.setName("User-" + i);
             profile.setEmail("user" + i + "@email.com");
+            profile.setBirthDate(LocalDate.parse(2000 + i + "-01-01"));
             profile.setInfo("I'm a user №" + i++);
             profile.setGender(Gender.OTHER);
             profiles.put(profile.getId(), profile);

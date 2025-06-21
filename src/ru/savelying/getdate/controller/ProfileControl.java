@@ -1,17 +1,16 @@
 package ru.savelying.getdate.controller;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.model.Gender;
-import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.service.ProfileService;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @WebServlet("/profile")
@@ -21,28 +20,33 @@ public class ProfileControl extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String toURL = "/not found";
+
         if (req.getParameter("id") != null) {
-            Optional<Profile> profile = profileService.getProfile(Long.parseLong(req.getParameter("id")));
-            if (profile.isPresent()) {
+            Optional<ProfileDTO> optProfileDto = profileService.getProfile(Long.parseLong(req.getParameter("id")));
+            if (optProfileDto.isPresent()) {
+                req.setAttribute("profile", optProfileDto.get());
                 toURL = "/WEB-INF/jsp/profile.jsp";
-                req.setAttribute("profile", profile.get());
             }
+        } else {
+            req.setAttribute("profiles", profileService.getProfiles());
+            toURL = "/WEB-INF/jsp/profiles.jsp";
         }
+
         req.getRequestDispatcher(toURL).forward(req, resp);
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Profile profile = getProfile(req);
-        profileService.createProfile(profile);
-        resp.sendRedirect("/profile?id=" + profile.getId());
+        ProfileDTO profileDTO = getProfileDTO(req);
+        Long id = profileService.createProfile(profileDTO);
+        resp.sendRedirect("/profile?id=" + id);
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Profile profile = getProfile(req);
-        profileService.updateProfile(profile);
-        resp.sendRedirect("/profile?id=" + profile.getId());
+        ProfileDTO profileDTO = getProfileDTO(req);
+        profileService.updateProfile(profileDTO);
+        resp.sendRedirect("/profile?id=" + profileDTO.getId());
     }
 
     @Override
@@ -50,17 +54,19 @@ public class ProfileControl extends HttpServlet {
         if (!req.getParameter("id").isBlank()) {
             profileService.deleteProfile(Long.parseLong(req.getParameter("id")));
         }
-        resp.sendRedirect("/registration");
+        resp.sendRedirect("/profile?id=all");
     }
 
-    private Profile getProfile(HttpServletRequest req) {
-        Profile profile = new Profile();
-        if (!req.getParameter("id").isBlank()) profile.setId(Long.parseLong(req.getParameter("id")));
-        profile.setEmail(req.getParameter("email"));
-        profile.setName(req.getParameter("name"));
-        profile.setInfo(req.getParameter("info"));
-        profile.setGender(Gender.valueOf(req.getParameter("gender")));
-        return profile;
+    private ProfileDTO getProfileDTO(HttpServletRequest req) {
+        ProfileDTO profileDTO = new ProfileDTO();
+        if (!req.getParameter("id").isBlank()) profileDTO.setId(Long.parseLong(req.getParameter("id")));
+        profileDTO.setEmail(req.getParameter("email"));
+        profileDTO.setName(req.getParameter("name"));
+        profileDTO.setInfo(req.getParameter("info"));
+        profileDTO.setGender(Gender.valueOf(req.getParameter("gender")));
+        if (req.getParameter("birthDate") != null && !req.getParameter("birthDate").isBlank())
+            profileDTO.setBirthDate(LocalDate.parse(req.getParameter("birthDate")));
+        return profileDTO;
     }
 
 //    public String create(String create) {
