@@ -1,5 +1,8 @@
 package ru.savelying.getdate.service;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
@@ -7,17 +10,13 @@ import ru.savelying.getdate.mapper.ProfileMapper;
 import java.util.List;
 import java.util.Optional;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProfileService {
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
+
+    @Getter
     private final static ProfileService instance = new ProfileService();
-
-    private ProfileService() {
-    }
-
-    public static ProfileService getInstance() {
-        return instance;
-    }
 
     public Long createProfile(ProfileDTO profileDTO) {
         return profileDAO.createProfile(profileMapper.mapFromDTO(profileDTO)).getId();

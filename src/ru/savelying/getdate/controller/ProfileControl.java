@@ -5,18 +5,17 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
-import ru.savelying.getdate.model.Gender;
-import ru.savelying.getdate.model.Status;
 import ru.savelying.getdate.service.ProfileService;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
+@Slf4j
 @WebServlet("/profile")
 public class ProfileControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();

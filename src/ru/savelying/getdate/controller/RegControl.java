@@ -5,12 +5,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.service.ProfileService;
 
 import java.io.IOException;
 
+@Slf4j
 @WebServlet("/registration")
 public class RegControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
@@ -24,6 +26,7 @@ public class RegControl extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
+        log.trace("Account create successful with email={}", profileDTO.getEmail());
         Long id = profileService.createProfile(profileDTO);
         resp.sendRedirect("/profile?id=" + id);
     }

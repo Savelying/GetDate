@@ -1,6 +1,9 @@
 package ru.savelying.getdate.mapper;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
@@ -9,15 +12,10 @@ import ru.savelying.getdate.model.Status;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
+    @Getter
     private final static ProfileMapper instance = new ProfileMapper();
-
-    private ProfileMapper() {
-    }
-
-    public static ProfileMapper getInstance() {
-        return instance;
-    }
 
     @Override
     public ProfileDTO mapToDTO(Profile obj) {

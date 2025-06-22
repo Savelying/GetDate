@@ -1,5 +1,6 @@
 package ru.savelying.getdate.dao;
 
+import lombok.Getter;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Status;
@@ -12,13 +13,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class ProfileDAO {
+    @Getter
     private final static ProfileDAO instance = new ProfileDAO();
     private final ConcurrentHashMap<Long, Profile> profiles;
     private final AtomicLong idStore;
-
-    public static ProfileDAO getInstance() {
-        return instance;
-    }
 
     public ProfileDAO() {
         this.profiles = new ConcurrentHashMap<>();
