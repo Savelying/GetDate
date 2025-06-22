@@ -3,6 +3,7 @@
 <html lang="en" xmlns:c="https://jakarta.ee/xml/ns/jakartaee">
 <head>
     <title>GetDate!</title>
+    <%@ include file="style.html" %>
 </head>
 <body>
 <%@ include file="header.jsp" %>
@@ -19,7 +20,7 @@
             </tr>
             <tr>
                 <td>${requestScope.wordBundle.getWord("email")}:</td>
-                <td><input type="email" name="email" value="${requestScope.profile.email}"></td>
+                <td><a href="/email?id=${requestScope.profile.id}">${requestScope.profile.email}</a></td>
             </tr>
             <tr>
                 <td>${requestScope.wordBundle.getWord("name")}:</td>

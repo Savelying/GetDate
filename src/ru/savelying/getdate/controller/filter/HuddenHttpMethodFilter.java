@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import ru.savelying.getdate.model.Gender;
+import ru.savelying.getdate.model.Status;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -17,7 +18,9 @@ public class HuddenHttpMethodFilter implements Filter {
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         filterConfig.getServletContext().setAttribute("genders", Gender.values());
+        filterConfig.getServletContext().setAttribute("statuses", Status.values());
 //        if (config.getServletContext().getAttribute("genders") == null) filterConfig.getServletContext().setAttribute("genders", Gender.values());    }
+//        if (config.getServletContext().getAttribute("statuses") == null) filterConfig.getServletContext().setAttribute("statuses", Status.values());    }
     }
 
     @Override

@@ -5,20 +5,19 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import ru.savelying.getdate.model.exception.DuplicateEmailException;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
-import ru.savelying.getdate.model.Gender;
-import ru.savelying.getdate.model.Status;
 import ru.savelying.getdate.service.ProfileService;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Optional;
 
+import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
-@WebServlet("/profile")
-public class ProfileControl extends HttpServlet {
+@WebServlet("/email")
+public class EmailControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
 
@@ -29,11 +28,8 @@ public class ProfileControl extends HttpServlet {
             Optional<ProfileDTO> optProfileDto = profileService.getProfile(Long.parseLong(req.getParameter("id")));
             if (optProfileDto.isPresent()) {
                 req.setAttribute("profile", optProfileDto.get());
-                toURL = "WEB-INF/jsp/profile.jsp";
+                toURL = "WEB-INF/jsp/email.jsp";
             }
-        } else {
-            req.setAttribute("profiles", profileService.getProfiles());
-            toURL = "WEB-INF/jsp/profiles.jsp";
         }
         if (toURL == null) resp.sendError(SC_NOT_FOUND);
         else req.getRequestDispatcher(toURL).forward(req, resp);
@@ -42,15 +38,11 @@ public class ProfileControl extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
-        profileService.updateProfile(profileDTO);
-        resp.sendRedirect("/profile?id=" + profileDTO.getId());
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!req.getParameter("id").isBlank()) {
-            profileService.deleteProfile(Long.parseLong(req.getParameter("id")));
+        try {
+            profileService.updateProfile(profileDTO);
+            resp.sendRedirect("/profile?id=" + profileDTO.getId());
+        } catch (DuplicateEmailException e) {
+            resp.sendError(SC_BAD_REQUEST);
         }
-        resp.sendRedirect("/profile");
     }
 }

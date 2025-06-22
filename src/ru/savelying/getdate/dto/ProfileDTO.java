@@ -1,6 +1,7 @@
 package ru.savelying.getdate.dto;
 
 import ru.savelying.getdate.model.Gender;
+import ru.savelying.getdate.model.Status;
 
 import java.time.LocalDate;
 
@@ -8,10 +9,12 @@ public class ProfileDTO {
     private Long id;
     private String name;
     private String email;
+    private String password;
     private String info;
     private Gender gender;
     private LocalDate birthDate;
     private Integer age;
+    private Status status;
 
     public Long getId() {
         return id;
@@ -67,5 +70,21 @@ public class ProfileDTO {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

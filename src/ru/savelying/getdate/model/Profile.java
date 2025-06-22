@@ -6,9 +6,11 @@ public class Profile {
     private Long id;
     private String name;
     private String email;
+    private String password;
     private String info;
     private Gender gender;
     private LocalDate birthDate;
+    private Status status;
 
     public Long getId() {
         return id;
@@ -56,6 +58,22 @@ public class Profile {
 
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     @Override

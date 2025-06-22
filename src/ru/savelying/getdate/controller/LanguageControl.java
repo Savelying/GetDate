@@ -22,6 +22,5 @@ public class LanguageControl extends HttpServlet {
 //        resp.addHeader("Set-Cookie", "lang=" + cookie.getValue());
 
         resp.sendRedirect(req.getHeader("referer"));
-
     }
 }

@@ -2,6 +2,7 @@ package ru.savelying.getdate.dao;
 
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
+import ru.savelying.getdate.model.Status;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,10 +22,10 @@ public class ProfileDAO {
 
     public ProfileDAO() {
         this.profiles = new ConcurrentHashMap<>();
-        this.idStore = new AtomicLong();
+        this.idStore = new AtomicLong(1L);
 
         //Генерируем список пользователей
-        int i=0;
+        int i=1;
         while (i <= 10) {
             Profile profile = new Profile();
             profile.setId(idStore.getAndIncrement());
@@ -33,6 +34,7 @@ public class ProfileDAO {
             profile.setBirthDate(LocalDate.parse(2000 + i + "-01-01"));
             profile.setInfo("I'm a user №" + i++);
             profile.setGender(Gender.OTHER);
+            profile.setStatus(Status.ACTIVE);
             profiles.put(profile.getId(), profile);
         }
     }
@@ -40,8 +42,8 @@ public class ProfileDAO {
     public Profile createProfile(Profile profile) {
         long id = idStore.getAndIncrement();
         profile.setId(id);
+        profile.setStatus(Status.INACTIVE);
         profiles.put(id, profile);
-        System.out.println(profiles.values());
         return profile;
     }
     public void updateProfile(Profile profile) {

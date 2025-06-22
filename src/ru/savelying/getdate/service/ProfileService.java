@@ -24,9 +24,12 @@ public class ProfileService {
     }
 
     public void updateProfile(ProfileDTO profileDTO) {
-        if (profileDTO.getBirthDate() == null) {
-            profileDTO.setBirthDate(profileDAO.getProfile(profileDTO.getId()).get().getBirthDate());
-        }
+        if (profileDTO.getName() == null) profileDTO.setName(profileDAO.getProfile(profileDTO.getId()).get().getName());
+        if (profileDTO.getEmail() == null) profileDTO.setEmail(profileDAO.getProfile(profileDTO.getId()).get().getEmail());
+        if (profileDTO.getInfo() == null) profileDTO.setInfo(profileDAO.getProfile(profileDTO.getId()).get().getInfo());
+        if (profileDTO.getGender() == null) profileDTO.setGender(profileDAO.getProfile(profileDTO.getId()).get().getGender());
+        if (profileDTO.getStatus() == null) profileDTO.setStatus(profileDAO.getProfile(profileDTO.getId()).get().getStatus());
+        if (profileDTO.getBirthDate() == null) profileDTO.setBirthDate(profileDAO.getProfile(profileDTO.getId()).get().getBirthDate());
         profileDAO.updateProfile(profileMapper.mapFromDTO(profileDTO));
     }
 

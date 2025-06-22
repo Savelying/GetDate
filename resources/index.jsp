@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
     <title>GetDate!</title>
+    <%@ include file="WEB-INF/jsp/style.html" %>
 </head>
 <body>
 <%@ include file="WEB-INF/jsp/header.jsp" %>
