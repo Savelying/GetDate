@@ -8,7 +8,7 @@
     <body>
         <%@ include file="header.jsp" %>
         <div>
-            <h3 style="color: red">400 - ${requestScope.wordBundle.getWord("page-bad-request")}</h3>
+            <h3 style="color: red">400 - ${wordBundle.getWord("page-bad-request")}</h3>
         </div>
         <%@ include file="footer.jsp" %>
     </body>

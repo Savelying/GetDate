@@ -5,13 +5,19 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.Getter;
+import lombok.Setter;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Status;
 
 import java.io.IOException;
 import java.util.Locale;
 
-@WebFilter("/*")
+import static jakarta.servlet.DispatcherType.FORWARD;
+import static jakarta.servlet.DispatcherType.REQUEST;
+import static ru.savelying.getdate.utils.StringUtils.isBlank;
+
+@WebFilter(value = "/*", dispatcherTypes = {REQUEST, FORWARD})
 public class HuddenHttpMethodFilter implements Filter {
     private static final String METHOD_PARAM = "_method";
 
@@ -28,19 +34,23 @@ public class HuddenHttpMethodFilter implements Filter {
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
 
-        String paramValue = request.getParameter(METHOD_PARAM);
-
-        if (request.getMethod().equals("POST") && paramValue != null && !paramValue.isBlank()) {
-            String method = paramValue.toUpperCase(Locale.ENGLISH);
-            HttpServletRequest wrapper = new HttpMethodRequestWrapper(request, method);
-            filterChain.doFilter(wrapper, response);
+        if (request.getDispatcherType() == FORWARD && request instanceof HttpMethodRequestWrapper) {
+            ((HttpMethodRequestWrapper) request).setMethod("GET");
         } else {
-            filterChain.doFilter(request, response);
+            String paramValue = request.getParameter(METHOD_PARAM);
+
+            if (request.getMethod().equals("POST") && !isBlank(paramValue)) {
+                String method = paramValue.toUpperCase(Locale.ENGLISH);
+                request = new HttpMethodRequestWrapper(request, method);
+            }
         }
+
+        filterChain.doFilter(request, response);
     }
 
+    @Setter
     private static class HttpMethodRequestWrapper extends HttpServletRequestWrapper {
-        private final String method;
+        private String method;
 
         public HttpMethodRequestWrapper(HttpServletRequest request, String method) {
             super(request);

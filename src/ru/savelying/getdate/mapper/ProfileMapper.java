@@ -10,7 +10,8 @@ import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Status;
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
+
+import static ru.savelying.getdate.utils.DateTimeUtils.getAge;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
@@ -26,8 +27,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         profileDTO.setInfo(obj.getInfo());
         profileDTO.setGender(obj.getGender());
 //        profileDTO.setBirthDate(obj.getBirthDate());
-        if (obj.getBirthDate() != null)
-            profileDTO.setAge(Math.toIntExact(ChronoUnit.YEARS.between(obj.getBirthDate(), LocalDate.now())));
+        if (obj.getBirthDate() != null) profileDTO.setAge(getAge(obj.getBirthDate()));
         profileDTO.setStatus(obj.getStatus());
         return profileDTO;
     }

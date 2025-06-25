@@ -9,13 +9,13 @@
         <%@ include file="header.jsp" %>
         <div>
             <h4 style="color: red">${requestScope.wordBundle.getWord("email-warning")}</h4>
-            <form method="post" action="/email">
+            <form method="post" action="/email?id=${profile.id}">
                 <input type="hidden" name="_method" value="put"/>
-                <input type="hidden" name="id" value="${requestScope.profile.id}">
+                <input type="hidden" name="id" value="${profile.id}">
                 <table>
                     <tr>
                         <td>${requestScope.wordBundle.getWord("email")}</td>
-                        <td><input type="email" name="email" value="${requestScope.profile.email}"></td>
+                        <td><input type="email" name="email" value="${profile.email}"></td>
                     </tr>
                 </table>
                 <br>

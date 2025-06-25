@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en">
     <head>
         <title>Charm Registration</title>
@@ -10,17 +11,30 @@
           <form method="post" action="/registration">
               <table>
                   <tr>
-                      <td>${requestScope.wordBundle.getWord("email")}</td>
-                      <td><input type="email" name="email" placeholder="user@mail.ru"></td>
+                      <td>${wordBundle.getWord("name")}:</td>
+                      <td><input type="text" name="name" value="${profile.name}"></td>
                   </tr>
                   <tr>
-                      <td>${requestScope.wordBundle.getWord("password")}</td>
+                      <td>${wordBundle.getWord("birth-date")}:</td>
+                      <td><input type="date" name="birthDate" value="${profile.birthDate}"></td>
+                  </tr>
+                  <tr>
+                      <td>${wordBundle.getWord("email")}</td>
+                      <td><input type="email" name="email" value="${profile.email}" placeholder="user@email.com"></td>
+                  </tr>
+                  <tr>
+                      <td>${wordBundle.getWord("password")}</td>
                       <td><input type="password" name="password"></td>
                   </tr>
               </table>
               <br>
-              <button type="submit">${requestScope.wordBundle.getWord("save")}</button>
+              <button type="submit">${wordBundle.getWord("save")}</button>
           </form>
+          <div style="color: red">
+              <c:forEach var="error" items="${errors}">
+                  <span>${wordBundle.getWord(error)}</span><br>
+              </c:forEach>
+          </div>
       </div>
       <%@ include file="footer.jsp" %>
     </body>

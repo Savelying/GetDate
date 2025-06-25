@@ -8,7 +8,7 @@
     <body>
         <%@ include file="header.jsp" %>
         <div>
-            <h3 style="color: red">500 - ${requestScope.wordBundle.getWord("unexpected-error")}</h3>
+            <h3 style="color: red">500 - ${wordBundle.getWord("unexpected-error")}</h3>
         </div>
         <%@ include file="footer.jsp" %>
     </body>

@@ -11,12 +11,12 @@
     <table>
         <tr>
             <th>id</th>
-            <th>${requestScope.wordBundle.getWord("name")}</th>
-            <th>${requestScope.wordBundle.getWord("age")}</th>
-            <th>${requestScope.wordBundle.getWord("email")}</th>
-            <th>${requestScope.wordBundle.getWord("status")}</th>
+            <th>${wordBundle.getWord("name")}</th>
+            <th>${wordBundle.getWord("age")}</th>
+            <th>${wordBundle.getWord("email")}</th>
+            <th>${wordBundle.getWord("status")}</th>
         </tr>
-        <c:forEach var="profile" items="${requestScope.profiles}">
+        <c:forEach var="profile" items="${profiles}">
             <tr>
                 <form action="/profile" method="post">
                     <td style="text-align: center">${profile.id}</td>
@@ -28,13 +28,13 @@
                         <input type="hidden" name="id" value="${profile.id}">
                         <select name="status">
                             <option value="${profile.status}" selected hidden>
-                                ${requestScope.wordBundle.getWord(profile.status)}
+                                ${wordBundle.getWord(profile.status)}
                             </option>
                             <c:forEach var="status" items="${applicationScope.statuses}">
-                                <option value="${status}">${requestScope.wordBundle.getWord(status)}</option>
+                                <option value="${status}">${wordBundle.getWord(status)}</option>
                             </c:forEach>
                         </select>
-                        <button type="submit">${requestScope.wordBundle.getWord("save")}</button>
+                        <button type="submit">${wordBundle.getWord("save")}</button>
                     </td>
                 </form>
             </tr>

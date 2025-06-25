@@ -9,8 +9,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 public class ProfileDAO {
     @Getter
@@ -23,7 +25,7 @@ public class ProfileDAO {
         this.idStore = new AtomicLong(1L);
 
         //Генерируем список пользователей
-        int i=1;
+        int i = 1;
         while (i <= 10) {
             Profile profile = new Profile();
             profile.setId(idStore.getAndIncrement());
@@ -44,17 +46,24 @@ public class ProfileDAO {
         profiles.put(id, profile);
         return profile;
     }
+
     public void updateProfile(Profile profile) {
         profiles.put(profile.getId(), profile);
     }
+
     public boolean deleteProfile(Long id) {
         return profiles.remove(id) != null;
     }
+
     public Optional<Profile> getProfile(Long id) {
         return Optional.ofNullable(profiles.get(id));
     }
 
     public List<Profile> getAllProfiles() {
         return new ArrayList<>(profiles.values());
+    }
+
+    public Set<String> getAllEmails() {
+        return profiles.values().stream().map(Profile::getEmail).collect(Collectors.toSet());
     }
 }
