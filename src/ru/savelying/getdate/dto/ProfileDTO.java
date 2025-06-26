@@ -1,25 +1,31 @@
 package ru.savelying.getdate.dto;
 
 import jakarta.servlet.http.Part;
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 import ru.savelying.getdate.model.Gender;
+import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
 
 import java.time.LocalDate;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProfileDTO {
-    private Long id;
-    private String name;
-    private String email;
-    private String password;
-    private String info;
-    private Gender gender;
-    private LocalDate birthDate;
-    private Integer age;
-    private Status status;
-    private Part photoImage;
-    private String photoFileName;
+    Long id;
+    String name;
+    String email;
+    String password;
+    String newPassword;
+    String info;
+    Gender gender;
+    LocalDate birthDate;
+    Integer age;
+    Status status;
+    Part photoImage;
+    String photoFileName;
+    Role role;
 
 //    public Long getId() {
 //        return id;

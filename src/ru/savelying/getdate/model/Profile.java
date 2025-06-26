@@ -1,20 +1,24 @@
 package ru.savelying.getdate.model;
 
+import lombok.AccessLevel;
 import lombok.Data;
+import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
 
 @Data
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class Profile {
-    private Long id;
-    private String name;
-    private String email;
-    private String password;
-    private String info;
-    private Gender gender;
-    private LocalDate birthDate;
-    private Status status;
-    private String photoFileName;
+    Long id;
+    String name;
+    String email;
+    String password;
+    String info;
+    Gender gender;
+    LocalDate birthDate;
+    Status status;
+    String photoFileName;
+    Role role;
 
     @Override
     public String toString() {

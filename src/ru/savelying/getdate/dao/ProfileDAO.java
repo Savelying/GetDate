@@ -3,6 +3,7 @@ package ru.savelying.getdate.dao;
 import lombok.Getter;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
+import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
 
 import java.time.LocalDate;
@@ -31,12 +32,16 @@ public class ProfileDAO {
             profile.setId(idStore.getAndIncrement());
             profile.setName("User-" + i);
             profile.setEmail("user" + i + "@email.com");
+            profile.setPassword("123");
             profile.setBirthDate(LocalDate.parse(2000 + i + "-01-01"));
             profile.setInfo("I'm a user №" + i++);
             profile.setGender(Gender.OTHER);
-            profile.setStatus(Status.ACTIVE);
+            profile.setStatus(Status.INACTIVE);
+            profile.setRole(Role.USER);
             profiles.put(profile.getId(), profile);
         }
+        profiles.get(1L).setRole(Role.ADMIN);
+        profiles.get(1L).setStatus(Status.ACTIVE);
     }
 
     public Profile createProfile(Profile profile) {
@@ -65,5 +70,10 @@ public class ProfileDAO {
 
     public Set<String> getAllEmails() {
         return profiles.values().stream().map(Profile::getEmail).collect(Collectors.toSet());
+    }
+
+    public Optional<Profile> getProfileByEmail(String email) {
+        if (email == null) return Optional.empty();
+        return profiles.values().stream().filter(profile -> profile.getEmail().equals(email)).findFirst();
     }
 }

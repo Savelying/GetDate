@@ -43,7 +43,6 @@ public class ProfileControl extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
-        System.out.println(profileDTO.getPhotoImage() + " : " + profileDTO.getPhotoFileName());
         profileService.updateProfile(profileDTO);
         resp.sendRedirect("/profile?id=" + profileDTO.getId());
     }

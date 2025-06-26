@@ -17,6 +17,18 @@
                         <td>${requestScope.wordBundle.getWord("email")}</td>
                         <td><input type="email" name="email" value="${profile.email}"></td>
                     </tr>
+                    <tr>
+                        <td>${wordBundle.getWord("password")}</td>
+                        <td><input type="password" name="password"></td>
+                    </tr>
+                    <tr>
+                        <td>${wordBundle.getWord("password-new")}</td>
+                        <td><input type="password" name="newPassword"></td>
+                    </tr>
+                    <tr>
+                        <td>${wordBundle.getWord("password-confirm")}</td>
+                        <td><input type="password" name="confirmPassword"></td>
+                    </tr>
                 </table>
                 <br>
                 <button type="submit">${requestScope.wordBundle.getWord("save")}</button>

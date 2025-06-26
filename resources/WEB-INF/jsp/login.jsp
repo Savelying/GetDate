@@ -8,17 +8,9 @@
     <body>
       <%@ include file="header.jsp" %>
       <div>
-          <h4 >${wordBundle.getWord("registration")}</h4>
-          <form method="post" action="/registration" enctype="multipart/form-data">
+          <h4 >${wordBundle.getWord("login")}</h4>
+          <form method="post" action="/login" enctype="multipart/form-data">
               <table>
-                  <tr>
-                      <td>${wordBundle.getWord("name")}:</td>
-                      <td><input type="text" name="name" value="${profile.name}"></td>
-                  </tr>
-                  <tr>
-                      <td>${wordBundle.getWord("birth-date")}:</td>
-                      <td><input type="date" name="birthDate" value="${profile.birthDate}"></td>
-                  </tr>
                   <tr>
                       <td>${wordBundle.getWord("email")}</td>
                       <td><input type="email" name="email" value="${profile.email}" placeholder="user@email.com"></td>
@@ -29,7 +21,7 @@
                   </tr>
               </table>
               <br>
-              <button type="submit">${wordBundle.getWord("save")}</button>
+              <button type="submit">${wordBundle.getWord("login")}</button>
           </form>
           <div style="color: red">
               <c:forEach var="error" items="${errors}">

@@ -32,6 +32,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (obj.getBirthDate() != null) profileDTO.setAge(getAge(obj.getBirthDate()));
         profileDTO.setStatus(obj.getStatus());
         profileDTO.setPhotoFileName(obj.getPhotoFileName());
+        profileDTO.setRole(obj.getRole());
         return profileDTO;
     }
 
@@ -53,19 +54,21 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
     @SneakyThrows
     public ProfileDTO getProfileDTO(HttpServletRequest req) {
         ProfileDTO profileDTO = new ProfileDTO();
-        if (req.getParameter("id") != null) profileDTO.setId(Long.parseLong(req.getParameter("id")));
-        if (req.getParameter("email") != null) profileDTO.setEmail(req.getParameter("email"));
-        if (req.getParameter("password") != null) profileDTO.setPassword(req.getParameter("password"));
-        if (req.getParameter("name") != null) profileDTO.setName(req.getParameter("name"));
-        if (req.getParameter("info") != null) profileDTO.setInfo(req.getParameter("info"));
-        if (req.getParameter("gender") != null) profileDTO.setGender(Gender.valueOf(req.getParameter("gender")));
-        if (req.getParameter("status") != null) profileDTO.setStatus(Status.valueOf(req.getParameter("status")));
-        if (req.getParameter("birthDate") != null && !req.getParameter("birthDate").isBlank())
+        if (!isBlank(req.getParameter("id"))) profileDTO.setId(Long.parseLong(req.getParameter("id")));
+        if (!isBlank(req.getParameter("email"))) profileDTO.setEmail(req.getParameter("email"));
+        if (!isBlank(req.getParameter("password"))) profileDTO.setPassword(req.getParameter("password"));
+        if (!isBlank(req.getParameter("name"))) profileDTO.setName(req.getParameter("name"));
+        if (!isBlank(req.getParameter("info"))) profileDTO.setInfo(req.getParameter("info"));
+        if (!isBlank(req.getParameter("gender"))) profileDTO.setGender(Gender.valueOf(req.getParameter("gender")));
+        if (!isBlank(req.getParameter("status"))) profileDTO.setStatus(Status.valueOf(req.getParameter("status")));
+        if (req.getParameter("birthDate") != null && !isBlank(req.getParameter("birthDate")))
             profileDTO.setBirthDate(LocalDate.parse(req.getParameter("birthDate")));
         if (req.getPart("photo") != null && !isBlank(req.getPart("photo").getSubmittedFileName())) {
             profileDTO.setPhotoImage(req.getPart("photo"));
             profileDTO.setPhotoFileName(req.getPart("photo").getSubmittedFileName());
         }
+        if (!isBlank(req.getParameter("newPassword")) && req.getParameter("newPassword").equals(req.getParameter("confirmPassword")))
+            profileDTO.setPassword(req.getParameter("newPassword"));
         return profileDTO;
     }
 }

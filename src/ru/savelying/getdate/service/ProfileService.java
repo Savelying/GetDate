@@ -50,7 +50,6 @@ public class ProfileService {
             profileDTO.setPhotoFileName(profileDTO.getId() + "-" + profileDTO.getPhotoImage().getSubmittedFileName());
             contentService.uploadPhoto(profileDTO.getPhotoFileName(), profileDTO.getPhotoImage().getInputStream());
         }
-
         profileDAO.updateProfile(profileMapper.mapFromDTO(profileDTO));
     }
 
@@ -65,5 +64,11 @@ public class ProfileService {
 
     public List<ProfileDTO> getProfiles() {
         return profileDAO.getAllProfiles().stream().map(profileMapper::mapToDTO).toList();
+    }
+
+    public Optional<ProfileDTO> login(ProfileDTO profileDTO) {
+        return profileDAO.getProfileByEmail(profileDTO.getEmail())
+                .filter(profile -> profile.getPassword().equals(profileDTO.getPassword()))
+                .map(profileMapper::mapToDTO);
     }
 }

@@ -11,9 +11,9 @@ import static ru.savelying.getdate.utils.DateTimeUtils.getAge;
 import static ru.savelying.getdate.utils.StringUtils.isBlank;
 
 @NoArgsConstructor
-public class Validator {
+public class RegValidator {
     @Getter
-    private final static Validator instance = new Validator();
+    private final static RegValidator instance = new RegValidator();
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
 
     private final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern

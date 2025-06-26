@@ -18,7 +18,7 @@
         </tr>
         <c:forEach var="profile" items="${profiles}">
             <tr>
-                <form action="/profile" method="post">
+                <form action="/profile" method="post" enctype="multipart/form-data">
                     <td style="text-align: center">${profile.id}</td>
                     <td><a href="/profile?id=${profile.id}">${profile.name}</a></td>
                     <td style="text-align: center">${profile.age}</td>

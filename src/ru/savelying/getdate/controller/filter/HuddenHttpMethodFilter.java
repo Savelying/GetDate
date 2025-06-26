@@ -5,7 +5,6 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
 import lombok.Setter;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Status;
