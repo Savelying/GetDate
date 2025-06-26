@@ -1,6 +1,7 @@
 package ru.savelying.getdate.controller;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,6 +18,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 @Slf4j
 @WebServlet("/profile")
+@MultipartConfig
 public class ProfileControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
@@ -41,6 +43,7 @@ public class ProfileControl extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
+        System.out.println(profileDTO.getPhotoImage() + " : " + profileDTO.getPhotoFileName());
         profileService.updateProfile(profileDTO);
         resp.sendRedirect("/profile?id=" + profileDTO.getId());
     }

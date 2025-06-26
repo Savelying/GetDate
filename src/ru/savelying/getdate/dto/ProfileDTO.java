@@ -1,5 +1,6 @@
 package ru.savelying.getdate.dto;
 
+import jakarta.servlet.http.Part;
 import lombok.Data;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Status;
@@ -17,6 +18,8 @@ public class ProfileDTO {
     private LocalDate birthDate;
     private Integer age;
     private Status status;
+    private Part photoImage;
+    private String photoFileName;
 
 //    public Long getId() {
 //        return id;

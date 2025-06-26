@@ -1,6 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<html lang="en">
+<html lang="en" xmlns:c="https://jakarta.ee/xml/ns/jakartaee">
     <head>
         <title>Charm Registration</title>
         <%@ include file="style.html" %>
@@ -8,7 +8,7 @@
     <body>
       <%@ include file="header.jsp" %>
       <div>
-          <form method="post" action="/registration">
+          <form method="post" action="/registration" enctype="multipart/form-data">
               <table>
                   <tr>
                       <td>${wordBundle.getWord("name")}:</td>

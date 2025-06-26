@@ -1,6 +1,7 @@
 package ru.savelying.getdate.controller;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 @Slf4j
 @WebServlet("/email")
+@MultipartConfig
 public class EmailControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();

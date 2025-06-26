@@ -14,6 +14,7 @@ public class Profile {
     private Gender gender;
     private LocalDate birthDate;
     private Status status;
+    private String photoFileName;
 
     @Override
     public String toString() {

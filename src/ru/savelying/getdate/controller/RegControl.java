@@ -1,6 +1,7 @@
 package ru.savelying.getdate.controller;
 
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +16,7 @@ import java.io.IOException;
 
 @Slf4j
 @WebServlet("/registration")
+@MultipartConfig
 public class RegControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();

@@ -9,7 +9,7 @@
         <%@ include file="header.jsp" %>
         <div>
             <h4 style="color: red">${requestScope.wordBundle.getWord("email-warning")}</h4>
-            <form method="post" action="/email?id=${profile.id}">
+            <form method="post" action="/email?id=${profile.id}" enctype="multipart/form-data">
                 <input type="hidden" name="_method" value="put"/>
                 <input type="hidden" name="id" value="${profile.id}">
                 <table>

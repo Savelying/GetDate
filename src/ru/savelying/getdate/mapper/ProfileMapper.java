@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
@@ -12,6 +13,7 @@ import ru.savelying.getdate.model.Status;
 import java.time.LocalDate;
 
 import static ru.savelying.getdate.utils.DateTimeUtils.getAge;
+import static ru.savelying.getdate.utils.StringUtils.isBlank;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
@@ -29,6 +31,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
 //        profileDTO.setBirthDate(obj.getBirthDate());
         if (obj.getBirthDate() != null) profileDTO.setAge(getAge(obj.getBirthDate()));
         profileDTO.setStatus(obj.getStatus());
+        profileDTO.setPhotoFileName(obj.getPhotoFileName());
         return profileDTO;
     }
 
@@ -43,9 +46,11 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (obj.getGender() != null) profile.setGender(obj.getGender());
         if (obj.getBirthDate() != null) profile.setBirthDate(obj.getBirthDate());
         if (obj.getStatus() != null) profile.setStatus(obj.getStatus());
+        if (obj.getPhotoFileName() != null) profile.setPhotoFileName(obj.getPhotoFileName());
         return profile;
     }
 
+    @SneakyThrows
     public ProfileDTO getProfileDTO(HttpServletRequest req) {
         ProfileDTO profileDTO = new ProfileDTO();
         if (req.getParameter("id") != null) profileDTO.setId(Long.parseLong(req.getParameter("id")));
@@ -57,6 +62,10 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (req.getParameter("status") != null) profileDTO.setStatus(Status.valueOf(req.getParameter("status")));
         if (req.getParameter("birthDate") != null && !req.getParameter("birthDate").isBlank())
             profileDTO.setBirthDate(LocalDate.parse(req.getParameter("birthDate")));
+        if (req.getPart("photo") != null && !isBlank(req.getPart("photo").getSubmittedFileName())) {
+            profileDTO.setPhotoImage(req.getPart("photo"));
+            profileDTO.setPhotoFileName(req.getPart("photo").getSubmittedFileName());
+        }
         return profileDTO;
     }
 }

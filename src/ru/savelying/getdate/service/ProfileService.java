@@ -3,6 +3,7 @@ package ru.savelying.getdate.service;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
@@ -14,6 +15,7 @@ import java.util.Optional;
 public class ProfileService {
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
+    private final ContentService contentService = ContentService.getInstance();
 
     @Getter
     private final static ProfileService instance = new ProfileService();
@@ -22,13 +24,33 @@ public class ProfileService {
         return profileDAO.createProfile(profileMapper.mapFromDTO(profileDTO)).getId();
     }
 
+    @SneakyThrows
     public void updateProfile(ProfileDTO profileDTO) {
-        if (profileDTO.getName() == null) profileDTO.setName(profileDAO.getProfile(profileDTO.getId()).get().getName());
-        if (profileDTO.getEmail() == null) profileDTO.setEmail(profileDAO.getProfile(profileDTO.getId()).get().getEmail());
-        if (profileDTO.getInfo() == null) profileDTO.setInfo(profileDAO.getProfile(profileDTO.getId()).get().getInfo());
-        if (profileDTO.getGender() == null) profileDTO.setGender(profileDAO.getProfile(profileDTO.getId()).get().getGender());
-        if (profileDTO.getStatus() == null) profileDTO.setStatus(profileDAO.getProfile(profileDTO.getId()).get().getStatus());
-        if (profileDTO.getBirthDate() == null) profileDTO.setBirthDate(profileDAO.getProfile(profileDTO.getId()).get().getBirthDate());
+        if (profileDTO.getName() == null)
+            profileDTO.setName(profileDAO.getProfile(profileDTO.getId()).get().getName());
+
+        if (profileDTO.getEmail() == null)
+            profileDTO.setEmail(profileDAO.getProfile(profileDTO.getId()).get().getEmail());
+
+        if (profileDTO.getInfo() == null)
+            profileDTO.setInfo(profileDAO.getProfile(profileDTO.getId()).get().getInfo());
+
+        if (profileDTO.getGender() == null)
+            profileDTO.setGender(profileDAO.getProfile(profileDTO.getId()).get().getGender());
+
+        if (profileDTO.getStatus() == null)
+            profileDTO.setStatus(profileDAO.getProfile(profileDTO.getId()).get().getStatus());
+
+        if (profileDTO.getBirthDate() == null)
+            profileDTO.setBirthDate(profileDAO.getProfile(profileDTO.getId()).get().getBirthDate());
+
+        if (profileDTO.getPhotoFileName() == null)
+            profileDTO.setPhotoFileName(profileDAO.getProfile(profileDTO.getId()).get().getPhotoFileName());
+        else {
+            profileDTO.setPhotoFileName(profileDTO.getId() + "-" + profileDTO.getPhotoImage().getSubmittedFileName());
+            contentService.uploadPhoto(profileDTO.getPhotoFileName(), profileDTO.getPhotoImage().getInputStream());
+        }
+
         profileDAO.updateProfile(profileMapper.mapFromDTO(profileDTO));
     }
 
