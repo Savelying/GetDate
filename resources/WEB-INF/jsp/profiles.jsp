@@ -22,7 +22,7 @@
                     <td style="text-align: center">${profile.id}</td>
                     <td><a href="/profile?id=${profile.id}">${profile.name}</a></td>
                     <td style="text-align: center">${profile.age}</td>
-                    <td>${profile.email}</td>
+                    <td><a href="/profile?id=${profile.id}">${profile.email}</a></td>
                     <td>
                         <input type="hidden" name="_method" value="put"/>
                         <input type="hidden" name="id" value="${profile.id}">
