@@ -14,6 +14,8 @@ import ru.savelying.getdate.validator.RegValidator;
 
 import java.io.IOException;
 
+import static ru.savelying.getdate.utils.UrlUtils.*;
+
 @Slf4j
 @WebServlet("/registration")
 @MultipartConfig
@@ -24,7 +26,7 @@ public class RegControl extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/jsp/registration.jsp").forward(req, resp);
+        req.getRequestDispatcher(getJspPath(REGISTRATION_URL)).forward(req, resp);
     }
 
     @Override
@@ -33,7 +35,7 @@ public class RegControl extends HttpServlet {
         if (validator.validate(profileDTO).isValid()) {
             Long id = profileService.createProfile(profileDTO);
             log.trace("Account create successful with email={} and id={}", profileDTO.getEmail(), id);
-            resp.sendRedirect("/login");
+            resp.sendRedirect(LOGIN_URL);
         } else {
             req.setAttribute("errors", validator.validate(profileDTO).getErrors());
             req.setAttribute("profile", profileDTO);

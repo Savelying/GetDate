@@ -5,7 +5,7 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.savelying.getdate.service.WordBundle;
+import ru.savelying.getdate.utils.WordBundle;
 
 import java.io.IOException;
 import java.util.Arrays;

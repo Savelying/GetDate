@@ -18,7 +18,9 @@
             </tr>
             <tr>
                 <td>${wordBundle.getWord("email")}:</td>
-                <td><a href="/email?id=${profile.id}">${profile.email}</a></td>
+                <td><a href="/email?id=${profile.id}">${profile.email}</a>
+                    <a href="/profile/pdf?id=${profile.id}">${wordBundle.getWord("download-profile")}</a>
+                </td>
             </tr>
             <tr>
                 <td>${wordBundle.getWord("name")}:</td>

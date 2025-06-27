@@ -9,15 +9,15 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/language")
+import static ru.savelying.getdate.utils.UrlUtils.LANG_URL;
+
+@WebServlet(LANG_URL)
 public class LanguageControl extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        Cookie cookie = new Cookie("lang", "en");
-        if (req.getParameter("lang").equals("ru")) {
-            cookie.setValue("ru");
-        }
+        Cookie cookie = new Cookie("lang", req.getParameter("lang").equals("ru") ? "ru" : "en");
+
         resp.addCookie(cookie);
 //        resp.addHeader("Set-Cookie", "lang=" + cookie.getValue());
 

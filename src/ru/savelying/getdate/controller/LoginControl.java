@@ -15,8 +15,10 @@ import ru.savelying.getdate.validator.LogValidator;
 import java.io.IOException;
 import java.util.Optional;
 
+import static ru.savelying.getdate.utils.UrlUtils.*;
+
 @Slf4j
-@WebServlet("/login")
+@WebServlet(LOGIN_URL)
 @MultipartConfig
 public class LoginControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
@@ -25,7 +27,7 @@ public class LoginControl extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getRequestDispatcher("WEB-INF/jsp/login.jsp").forward(req, resp);
+        req.getRequestDispatcher(getJspPath(LOGIN_URL)).forward(req, resp);
     }
 
     @Override
@@ -35,9 +37,9 @@ public class LoginControl extends HttpServlet {
             Optional<ProfileDTO> userDetailsOptional = profileService.login(profileDTO);
             if (userDetailsOptional.isPresent()) {
                 req.getSession().setAttribute("user", userDetailsOptional.get());
-                resp.sendRedirect("/profile?id=" + userDetailsOptional.get().getId());
-                log.trace("Account login successful with email={} and id={}", profileDTO.getEmail(), profileDTO.getId());
-            } else resp.sendRedirect("/login");
+                resp.sendRedirect(PROFILE_URL + "?id=" + userDetailsOptional.get().getId());
+                log.info("Account login successful with email={} and id={}", profileDTO.getEmail(), profileDTO.getId());
+            } else resp.sendRedirect(LOGIN_URL);
         } else {
             req.setAttribute("errors", validator.validate(profileDTO).getErrors());
             req.setAttribute("profile", profileDTO);

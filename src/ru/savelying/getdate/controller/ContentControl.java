@@ -9,7 +9,10 @@ import ru.savelying.getdate.service.ContentService;
 
 import java.io.IOException;
 
-@WebServlet("/content/*")
+import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static ru.savelying.getdate.utils.UrlUtils.CONTENT_URL;
+
+@WebServlet(CONTENT_URL + "/*")
 public class ContentControl extends HttpServlet {
 private final static ContentService contentService = ContentService.getInstance();
 
@@ -20,7 +23,7 @@ private final static ContentService contentService = ContentService.getInstance(
             resp.setContentType("application/octet-stream");
             contentService.downloadPhoto(contentPath, resp.getOutputStream());
         } catch (IOException e) {
-            resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+            resp.sendError(SC_NOT_FOUND);
         }
     }
 }

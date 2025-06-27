@@ -1,4 +1,4 @@
-package ru.savelying.getdate.service;
+package ru.savelying.getdate.utils;
 
 import java.util.Locale;
 import java.util.MissingResourceException;

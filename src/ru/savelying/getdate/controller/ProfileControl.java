@@ -1,5 +1,8 @@
 package ru.savelying.getdate.controller;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.pdf.PdfWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,12 +15,15 @@ import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.service.ProfileService;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static ru.savelying.getdate.utils.StringUtils.isBlank;
+import static ru.savelying.getdate.utils.UrlUtils.*;
 
 @Slf4j
-@WebServlet("/profile")
+@WebServlet(PROFILE_URL + "/*")
 @MultipartConfig
 public class ProfileControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
@@ -25,33 +31,53 @@ public class ProfileControl extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String toURL = null;
         if (req.getParameter("id") != null) {
             Optional<ProfileDTO> optProfileDto = profileService.getProfile(Long.parseLong(req.getParameter("id")));
             if (optProfileDto.isPresent()) {
-                req.setAttribute("profile", optProfileDto.get());
-                toURL = "WEB-INF/jsp/profile.jsp";
+                if (req.getRequestURI().equals("/profile/pdf")) {
+                    resp.setHeader("Content-Disposition", "attachment; filename=\"profile.pdf\"");
+                    resp.setContentType("application/pdf");
+                    resp.setCharacterEncoding("UTF-8");
+                    ProfileDTO profileDto = optProfileDto.get();
+                    try (OutputStream out = resp.getOutputStream()) {
+                        Document pdf = new Document();
+                        PdfWriter.getInstance(pdf, out);
+                        profileMapper.getProfilePdf(pdf, profileDto);
+                    } catch (DocumentException e) {
+                        throw new IOException(e);
+                    }
+                } else {
+                    req.setAttribute("profile", optProfileDto.get());
+                    req.getRequestDispatcher(getJspPath(PROFILE_URL)).forward(req, resp);
+                }
+            } else {
+                resp.sendError(SC_NOT_FOUND);
             }
         } else {
             req.setAttribute("profiles", profileService.getProfiles());
-            toURL = "WEB-INF/jsp/profiles.jsp";
+            req.getRequestDispatcher(getJspPath("/profiles")).forward(req, resp);
         }
-        if (toURL == null) resp.sendError(SC_NOT_FOUND);
-        else req.getRequestDispatcher(toURL).forward(req, resp);
     }
 
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
         profileService.updateProfile(profileDTO);
-        resp.sendRedirect("/profile?id=" + profileDTO.getId());
+        resp.sendRedirect(req.getHeader("referer"));
     }
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!req.getParameter("id").isBlank()) {
-            profileService.deleteProfile(Long.parseLong(req.getParameter("id")));
+        if (!isBlank(req.getParameter("id")) && profileService.deleteProfile(Long.parseLong(req.getParameter("id")))) {
+            log.info("Profile with id {} has been deleted", req.getParameter("id"));
+            ProfileDTO profileDTO = (ProfileDTO) req.getSession().getAttribute("userDetails");
+            if (req.getParameter("id").equals(profileDTO.getId().toString())) {
+                req.getSession().invalidate();
+            }
+            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            resp.sendRedirect(REGISTRATION_URL);
+        } else {
+            resp.sendError(SC_NOT_FOUND);
         }
-        resp.sendRedirect("/profile");
     }
 }

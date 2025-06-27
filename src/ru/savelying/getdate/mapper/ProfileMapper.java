@@ -1,5 +1,9 @@
 package ru.savelying.getdate.mapper;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPTable;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,10 +14,14 @@ import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Status;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.time.LocalDate;
 
 import static ru.savelying.getdate.utils.DateTimeUtils.getAge;
 import static ru.savelying.getdate.utils.StringUtils.isBlank;
+import static ru.savelying.getdate.utils.UrlUtils.BASE_CONTENT_PATH;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
@@ -70,5 +78,30 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (!isBlank(req.getParameter("newPassword")) && req.getParameter("newPassword").equals(req.getParameter("confirmPassword")))
             profileDTO.setPassword(req.getParameter("newPassword"));
         return profileDTO;
+    }
+
+    @SneakyThrows
+    public Document getProfilePdf(Document pdf, ProfileDTO profileDTO) {
+        pdf.open();
+        PdfPTable table = new PdfPTable(2);
+        table.addCell("Photo");
+        if (profileDTO.getPhotoFileName() != null) {
+            Image img = Image.getInstance(Path.of(BASE_CONTENT_PATH, URLDecoder.decode(profileDTO.getPhotoFileName(), StandardCharsets.UTF_8)).toAbsolutePath().toString());
+            img.scaleToFit(200, 200);
+            table.addCell(new PdfPCell(img));
+        } else table.addCell("");
+        table.addCell("Email");
+        table.addCell(profileDTO.getEmail());
+        table.addCell("Name");
+        table.addCell(profileDTO.getName());
+        table.addCell("Age");
+        table.addCell(profileDTO.getAge().toString());
+        table.addCell("Gender");
+        table.addCell(profileDTO.getGender().toString());
+        table.addCell("Info");
+        table.addCell(profileDTO.getInfo());
+        pdf.add(table);
+        pdf.close();
+        return pdf;
     }
 }

@@ -7,23 +7,25 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import ru.savelying.getdate.model.exception.DuplicateEmailException;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.service.ProfileService;
+import ru.savelying.getdate.validator.RegValidator;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static jakarta.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static ru.savelying.getdate.utils.StringUtils.isBlank;
+import static ru.savelying.getdate.utils.UrlUtils.*;
 
 @Slf4j
-@WebServlet("/email")
+@WebServlet(EMAIL_URL)
 @MultipartConfig
 public class EmailControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
+    private final RegValidator validator = RegValidator.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -32,7 +34,7 @@ public class EmailControl extends HttpServlet {
             Optional<ProfileDTO> optProfileDto = profileService.getProfile(Long.parseLong(req.getParameter("id")));
             if (optProfileDto.isPresent()) {
                 req.setAttribute("profile", optProfileDto.get());
-                toURL = "WEB-INF/jsp/email.jsp";
+                toURL = getJspPath(EMAIL_URL);
             }
         }
         if (toURL == null) resp.sendError(SC_NOT_FOUND);
@@ -42,12 +44,16 @@ public class EmailControl extends HttpServlet {
     @Override
     protected void doPut(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
-        try {
+        if (validator.validate(profileDTO).isValid()) {
             profileService.updateProfile(profileDTO);
-            log.info("Email {} was successfully updated in profile id={}", profileDTO.getEmail(), profileDTO.getId());
-            resp.sendRedirect("/profile?id=" + profileDTO.getId());
-        } catch (DuplicateEmailException e) {
-            resp.sendError(SC_BAD_REQUEST);
+            if (!isBlank(profileDTO.getEmail())) {
+                log.warn("Profile with id {} changed email to {}", profileDTO.getId(), profileDTO.getEmail());
+            }
+            resp.sendRedirect(String.format(PROFILE_URL + "?id=%s", profileDTO.getId()));
+        } else {
+            req.setAttribute("errors", validator.validate(profileDTO).getErrors());
+            req.setAttribute("profile", profileDTO);
+            doGet(req, resp);
         }
     }
 }
