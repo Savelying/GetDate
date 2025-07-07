@@ -12,10 +12,11 @@
             <form method="post" action="/email?id=${profile.id}" enctype="multipart/form-data">
                 <input type="hidden" name="_method" value="put"/>
                 <input type="hidden" name="id" value="${profile.id}">
+                <input type="hidden" name="email" value="${profile.email}">
                 <table>
                     <tr>
                         <td>${requestScope.wordBundle.getWord("email")}</td>
-                        <td><input type="email" name="email" value="${profile.email}"></td>
+                        <td><input type="email" name="newEmail" value="${profile.email}"></td>
                     </tr>
                     <tr>
                         <td>${wordBundle.getWord("password")}</td>
@@ -33,6 +34,11 @@
                 <br>
                 <button type="submit">${requestScope.wordBundle.getWord("save")}</button>
             </form>
+            <div style="color: red">
+                <c:forEach var="error" items="${errors}">
+                    <span>${wordBundle.getWord(error)}</span><br>
+                </c:forEach>
+            </div>
         </div>
         <%@ include file="footer.jsp" %>
     </body>

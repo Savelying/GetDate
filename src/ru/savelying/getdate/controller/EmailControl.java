@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.service.ProfileService;
+import ru.savelying.getdate.validator.EmailValidator;
 import ru.savelying.getdate.validator.RegValidator;
 
 import java.io.IOException;
@@ -25,7 +26,7 @@ import static ru.savelying.getdate.utils.UrlUtils.*;
 public class EmailControl extends HttpServlet {
     private final ProfileService profileService = ProfileService.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
-    private final RegValidator validator = RegValidator.getInstance();
+    private final EmailValidator validator = EmailValidator.getInstance();
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

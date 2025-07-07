@@ -21,6 +21,7 @@ public class RegValidator {
 
     public ValidationResult validate(ProfileDTO profile) {
         ValidationResult result = new ValidationResult();
+
         if (isBlank(profile.getEmail()) || !VALID_EMAIL_ADDRESS_REGEX.matcher(profile.getEmail()).matches()) {
             result.addError("error.email.invalid");
         }

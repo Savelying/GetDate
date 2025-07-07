@@ -27,25 +27,29 @@ public class ProfileService {
     @SneakyThrows
     public void updateProfile(ProfileDTO profileDTO) {
         if (profileDTO.getName() == null)
-            profileDTO.setName(profileDAO.getProfile(profileDTO.getId()).get().getName());
+            profileDTO.setName(profileDAO.getProfileById(profileDTO.getId()).get().getName());
 
         if (profileDTO.getEmail() == null)
-            profileDTO.setEmail(profileDAO.getProfile(profileDTO.getId()).get().getEmail());
+            profileDTO.setEmail(profileDAO.getProfileById(profileDTO.getId()).get().getEmail());
+        else if (profileDTO.getNewEmail() != null)
+            profileDTO.setEmail(profileDTO.getNewEmail());
 
-        if (profileDTO.getInfo() == null)
-            profileDTO.setInfo(profileDAO.getProfile(profileDTO.getId()).get().getInfo());
+        if (profileDTO.getPassword() == null)
+            profileDTO.setPassword(profileDAO.getProfileById(profileDTO.getId()).get().getPassword());
+        else if (profileDTO.getNewPassword() != null)
+            profileDTO.setPassword(profileDTO.getNewPassword());
 
         if (profileDTO.getGender() == null)
-            profileDTO.setGender(profileDAO.getProfile(profileDTO.getId()).get().getGender());
+            profileDTO.setGender(profileDAO.getProfileById(profileDTO.getId()).get().getGender());
 
         if (profileDTO.getStatus() == null)
-            profileDTO.setStatus(profileDAO.getProfile(profileDTO.getId()).get().getStatus());
+            profileDTO.setStatus(profileDAO.getProfileById(profileDTO.getId()).get().getStatus());
 
         if (profileDTO.getBirthDate() == null)
-            profileDTO.setBirthDate(profileDAO.getProfile(profileDTO.getId()).get().getBirthDate());
+            profileDTO.setBirthDate(profileDAO.getProfileById(profileDTO.getId()).get().getBirthDate());
 
         if (profileDTO.getPhotoFileName() == null)
-            profileDTO.setPhotoFileName(profileDAO.getProfile(profileDTO.getId()).get().getPhotoFileName());
+            profileDTO.setPhotoFileName(profileDAO.getProfileById(profileDTO.getId()).get().getPhotoFileName());
         else {
             profileDTO.setPhotoFileName(profileDTO.getId() + "-" + profileDTO.getPhotoImage().getSubmittedFileName());
             contentService.uploadPhoto(profileDTO.getPhotoFileName(), profileDTO.getPhotoImage().getInputStream());
@@ -59,7 +63,7 @@ public class ProfileService {
 
     public Optional<ProfileDTO> getProfile(Long id) {
         if (id == null) return Optional.empty();
-        return profileDAO.getProfile(id).map(profileMapper::mapToDTO);
+        return profileDAO.getProfileById(id).map(profileMapper::mapToDTO);
     }
 
     public List<ProfileDTO> getProfiles() {

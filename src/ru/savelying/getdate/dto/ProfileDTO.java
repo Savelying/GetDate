@@ -14,10 +14,12 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProfileDTO {
     Long id;
-    String name;
     String email;
+    String newEmail;
     String password;
     String newPassword;
+    String confirmPassword;
+    String name;
     String info;
     Gender gender;
     LocalDate birthDate;

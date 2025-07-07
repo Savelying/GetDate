@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.util.Optional;
 
 import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static jakarta.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static ru.savelying.getdate.utils.StringUtils.isBlank;
 import static ru.savelying.getdate.utils.UrlUtils.*;
 
@@ -68,13 +69,14 @@ public class ProfileControl extends HttpServlet {
 
     @Override
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        if (!isBlank(req.getParameter("id")) && profileService.deleteProfile(Long.parseLong(req.getParameter("id")))) {
-            log.info("Profile with id {} has been deleted", req.getParameter("id"));
+        String id = req.getParameter("id");
+        if (!isBlank(id) && profileService.deleteProfile(Long.parseLong(id))) {
+            log.info("Profile with id {} has been deleted", id);
             ProfileDTO profileDTO = (ProfileDTO) req.getSession().getAttribute("userDetails");
-            if (req.getParameter("id").equals(profileDTO.getId().toString())) {
+            if (profileDTO.getId().toString().equals(id)) {
                 req.getSession().invalidate();
             }
-            resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+            resp.setStatus(SC_NO_CONTENT);
             resp.sendRedirect(REGISTRATION_URL);
         } else {
             resp.sendError(SC_NOT_FOUND);

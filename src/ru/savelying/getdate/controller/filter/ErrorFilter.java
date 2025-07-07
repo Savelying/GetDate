@@ -2,12 +2,12 @@ package ru.savelying.getdate.controller.filter;
 
 import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import ru.savelying.getdate.mapper.JsonMapper;
 import ru.savelying.getdate.utils.WordBundle;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ import static ru.savelying.getdate.utils.UrlUtils.REST_URL;
 @Slf4j
 @WebFilter(value = "/*", dispatcherTypes = DispatcherType.ERROR)
 public class ErrorFilter implements Filter {
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper jsonMapper = JsonMapper.getInstance();
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -53,11 +53,7 @@ public class ErrorFilter implements Filter {
         if (((String) request.getAttribute(ERROR_REQUEST_URI)).startsWith(REST_URL)) {
             if (!errorMap.isEmpty()) {
                 try (PrintWriter writer = response.getWriter()) {
-                    response.setContentType("application/json");
-                    response.setCharacterEncoding("UTF-8");
-                    if (!errorMap.isEmpty()) {
-                        objectMapper.writeValue(writer, errorMap);
-                    }
+                        jsonMapper.writeValue(writer, errorMap);
                 } catch (DatabindException ex) {
                     throw new IOException(ex);
                 }

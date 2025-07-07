@@ -28,6 +28,7 @@
                   <span>${wordBundle.getWord(error)}</span><br>
               </c:forEach>
           </div>
+          <a href="/registration">${wordBundle.getWord("create-profile")}</a>
       </div>
       <%@ include file="footer.jsp" %>
     </body>

@@ -10,9 +10,9 @@ import java.time.LocalDate;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Profile {
     Long id;
-    String name;
     String email;
     String password;
+    String name;
     String info;
     Gender gender;
     LocalDate birthDate;
@@ -25,8 +25,14 @@ public class Profile {
         return "Profile{" +
                 "id=" + id +
                 ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
                 ", name='" + name + '\'' +
                 ", info='" + info + '\'' +
+                ", gender=" + gender +
+                ", birthDate=" + birthDate +
+                ", status=" + status +
+                ", photoFileName='" + photoFileName + '\'' +
+                ", role=" + role +
                 '}';
     }
 
