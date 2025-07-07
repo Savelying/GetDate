@@ -86,17 +86,17 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
             profileDTO.setPhotoFileName(req.getPart("photo").getSubmittedFileName());
         }
 
-        if (!isBlank(req.getParameter("newPassword")))
-            profileDTO.setNewPassword(req.getParameter("newPassword"));
-
         if (!isBlank(req.getParameter("newEmail")) && !req.getParameter("newEmail").equals(req.getParameter("email"))) {
             profileDTO.setNewEmail(req.getParameter("newEmail"));
+        }
+
+        if (!isBlank(req.getParameter("newPassword"))) {
+            profileDTO.setNewPassword(req.getParameter("newPassword"));
         }
 
         if (!isBlank(req.getParameter("confirmPassword")))
             profileDTO.setConfirmPassword(req.getParameter("confirmPassword"));
 
-        System.out.println("Email: " + profileDTO.getEmail() + "; newEmail: " + profileDTO.getNewEmail() + "; newPassword: " + profileDTO.getNewPassword());
         return profileDTO;
     }
 
