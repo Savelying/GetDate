@@ -1,4 +1,4 @@
-package ru.savelying.getdate.utils;
+package ru.savelying.getdate.service.bundle;
 
 import java.util.Locale;
 import java.util.MissingResourceException;
@@ -7,12 +7,7 @@ import java.util.ResourceBundle;
 public class WordBundle {
     private final ResourceBundle resourceBundle;
 
-    public WordBundle(String lang) {
-//        Locale locale = Locale.getDefault();
-        Locale locale = Locale.of("en");
-        if (lang.equals("ru")) {
-            locale = Locale.of("ru");
-        }
+    public WordBundle(Locale locale) {
         this.resourceBundle = ResourceBundle.getBundle("words", locale);
     }
 

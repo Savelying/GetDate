@@ -5,14 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import ru.savelying.getdate.dto.ProfileFilter;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
+import ru.savelying.getdate.utils.ConnectUtils;
 
 import java.sql.*;
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.*;
+
+import static ru.savelying.getdate.utils.ConnectUtils.*;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -22,20 +27,14 @@ public class ProfileDAO {
 
     @SneakyThrows
     public static ProfileDAO getInstance() {
-        Class.forName("org.postgresql.Driver");
         return instance;
     }
-
-    public static final String dbName = "getdate";
-    public static final String dbURL = "jdbc:postgresql://localhost:5432/" + dbName;
-    public static final String dbUser = "postgres";
-    public static final String dbPassword = "qwerty";
 
 
     public Profile createProfile(Profile profile) {
         String sql = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-             PreparedStatement statement = connection.prepareStatement(sql)) {
+        try (Connection connection = ConnectUtils.getConnnect();
+             PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, profile.getEmail());
             statement.setString(2, profile.getPassword());
             statement.setString(3, profile.getName());
@@ -56,36 +55,6 @@ public class ProfileDAO {
     }
 
     public void updateProfile(Profile profile) {
-
-        // Ссобираем строку запроса прямым способом конкатенации
-//        StringBuilder query = new StringBuilder("UPDATE profiles SET");
-//        query.append(" email = ?");
-//        query.append(", password = ?");
-//        query.append(", name = ?");
-//        query.append(", info = ?");
-//        query.append(", gender = ?");
-//        query.append(", birth_date = ?");
-//        query.append(", status = ?");
-//        query.append(", role = ?");
-//        query.append(", photo = ?");
-//        query.append(" WHERE id = ?");
-//        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-//             PreparedStatement statement = connection.prepareStatement(query.toString())) {
-//            statement.setString(1, profile.getEmail());
-//            statement.setString(2, profile.getPassword());
-//            statement.setString(3, profile.getName());
-//            statement.setString(4, profile.getInfo());
-//            statement.setString(5, profile.getGender().toString());
-//            statement.setDate(6, Date.valueOf(profile.getBirthDate()));
-//            statement.setString(7, profile.getStatus().toString());
-//            statement.setString(8, profile.getRole().toString());
-//            statement.setString(9, profile.getPhotoFileName());
-//            statement.setLong(10, profile.getId());
-//            log.debug("Final update sql: {}", query);
-//            int updateCount = statement.executeUpdate();
-//            log.debug("Update count : {}", updateCount);
-
-        // Собираем строку запроса с помощью форматирования с подставлением аргументов
         List<Object> args = new ArrayList<>();
         StringBuilder query = new StringBuilder("UPDATE profiles SET");
         if (profile.getEmail() != null) {
@@ -129,7 +98,7 @@ public class ProfileDAO {
             args.add(profile.getId());
         }
         String updateQuery = query.toString();
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+        try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = connection.prepareStatement(updateQuery)) {
             for (int i = 0; i < args.size(); i++) statement.setObject(i + 1, args.get(i));
             log.debug("Final update sql: {}", statement);
@@ -143,7 +112,7 @@ public class ProfileDAO {
 
     public boolean deleteProfile(Long id) {
         String sql = "delete from profiles where id = ?";
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+        try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             int deleteCount = statement.executeUpdate();
@@ -156,7 +125,7 @@ public class ProfileDAO {
 
     public Optional<Profile> getProfileById(Long id) {
         String sql = "select * from profiles where id = ?";
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+        try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setLong(1, id);
             ResultSet rs = statement.executeQuery();
@@ -170,7 +139,7 @@ public class ProfileDAO {
 
     public Optional<Profile> getProfileByEmail(String email) {
         String sql = "select * from profiles where email = ?";
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
+        try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, email);
             ResultSet resultSet = statement.executeQuery();
@@ -182,11 +151,50 @@ public class ProfileDAO {
         }
     }
 
-    public List<Profile> getAllProfiles() {
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-             Statement statement = connection.createStatement()) {
-            String sql = "select * from profiles";
-            ResultSet resultSet = statement.executeQuery(sql);
+    public boolean existsProfileByEmail(String email) {
+        String sql = "select * from profiles where email = ?";
+        try (Connection connection = ConnectUtils.getConnnect();
+             PreparedStatement statement  = connection.prepareStatement(sql)){
+            statement.setString(1, email);
+            ResultSet resultSet = statement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Profile> getAllProfiles(ProfileFilter filter) {
+        String sql = "select * from profiles where '' = ''";
+        StringBuilder query = new StringBuilder(sql);
+        List<Object> args = new ArrayList<>();
+        if (filter.getNameStartWith() != null) {
+            query.append(" and name like ?");
+            args.add(filter.getNameStartWith() + "%");
+        }
+        if (filter.getEmailStartWith() != null) {
+            query.append(" and email like ?");
+            args.add(filter.getEmailStartWith() + "%");
+        }
+        if (filter.getStatus() != null) {
+            query.append(" and status like ?");
+            args.add(filter.getStatus().toString() + "%");
+        }
+        if (filter.getLowAge() != null) {
+            query.append(" and birth_date <= ?");
+            args.add(Date.valueOf(LocalDate.now().minusYears(filter.getLowAge())));
+        }
+        if (filter.getHighAge() != null) {
+            query.append(" and birth_date >= ?");
+            args.add(Date.valueOf(LocalDate.now().minusYears(filter.getHighAge())));
+        }
+        try (Connection connection = ConnectUtils.getConnnect();
+             PreparedStatement statement = connection.prepareStatement(query.toString())) {
+            for (int i = 0; i < args.size(); i++) statement.setObject(i + 1, args.get(i));
+            statement.setQueryTimeout(dbQueryTimeout);
+            statement.setFetchSize(dbFetchSize);
+            statement.setMaxRows(dbMaxRows);
+            log.debug("Final select sql: {}", statement);
+            ResultSet resultSet = statement.executeQuery();
             List<Profile> profiles = new ArrayList<>();
             while (resultSet.next()) profiles.add(getProfileFromDB(resultSet));
             return profiles;
@@ -195,18 +203,18 @@ public class ProfileDAO {
         }
     }
 
-    public Set<String> getAllEmails() {
-        try (Connection connection = DriverManager.getConnection(dbURL, dbUser, dbPassword);
-             Statement statement = connection.createStatement()) {
-            String sql = "select * from profiles";
-            ResultSet resultSet = statement.executeQuery(sql);
-            Set<String> emails = new HashSet<>();
-            while (resultSet.next()) emails.add(getProfileFromDB(resultSet).getEmail());
-            return emails;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public Set<String> getAllEmails() {
+//        String sql = "select * from profiles";
+//        try (Connection connection = ConnectUtils.getConnnect();
+//             PreparedStatement statement = connection.prepareStatement(sql)) {
+//            ResultSet resultSet = statement.executeQuery();
+//            Set<String> emails = new HashSet<>();
+//            while (resultSet.next()) emails.add(getProfileFromDB(resultSet).getEmail());
+//            return emails;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     private Profile getProfileFromDB(ResultSet resultSet) throws SQLException {
         Profile profile = new Profile();

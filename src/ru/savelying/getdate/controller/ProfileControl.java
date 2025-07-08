@@ -35,11 +35,11 @@ public class ProfileControl extends HttpServlet {
         if (req.getParameter("id") != null) {
             Optional<ProfileDTO> optProfileDto = profileService.getProfile(Long.parseLong(req.getParameter("id")));
             if (optProfileDto.isPresent()) {
+                ProfileDTO profileDto = optProfileDto.get();
                 if (req.getRequestURI().equals("/profile/pdf")) {
                     resp.setHeader("Content-Disposition", "attachment; filename=\"profile.pdf\"");
                     resp.setContentType("application/pdf");
                     resp.setCharacterEncoding("UTF-8");
-                    ProfileDTO profileDto = optProfileDto.get();
                     try (OutputStream out = resp.getOutputStream()) {
                         Document pdf = new Document();
                         PdfWriter.getInstance(pdf, out);
@@ -48,15 +48,12 @@ public class ProfileControl extends HttpServlet {
                         throw new IOException(e);
                     }
                 } else {
-                    req.setAttribute("profile", optProfileDto.get());
+                    req.setAttribute("profile", profileDto);
                     req.getRequestDispatcher(getJspPath(PROFILE_URL)).forward(req, resp);
                 }
             } else {
                 resp.sendError(SC_NOT_FOUND);
             }
-        } else {
-            req.setAttribute("profiles", profileService.getProfiles());
-            req.getRequestDispatcher(getJspPath("/profiles")).forward(req, resp);
         }
     }
 

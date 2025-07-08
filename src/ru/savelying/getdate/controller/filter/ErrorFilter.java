@@ -1,14 +1,13 @@
 package ru.savelying.getdate.controller.filter;
 
 import com.fasterxml.jackson.databind.DatabindException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.mapper.JsonMapper;
-import ru.savelying.getdate.utils.WordBundle;
+import ru.savelying.getdate.service.bundle.WordBundle;
 
 import java.io.IOException;
 import java.io.PrintWriter;

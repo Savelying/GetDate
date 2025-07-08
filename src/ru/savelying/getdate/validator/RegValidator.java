@@ -19,23 +19,23 @@ public class RegValidator {
     private final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern
             .compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
-    public ValidationResult validate(ProfileDTO profile) {
+    public ValidationResult validate(ProfileDTO profileDTO) {
         ValidationResult result = new ValidationResult();
 
-        if (isBlank(profile.getEmail()) || !VALID_EMAIL_ADDRESS_REGEX.matcher(profile.getEmail()).matches()) {
+        if (isBlank(profileDTO.getEmail()) || !VALID_EMAIL_ADDRESS_REGEX.matcher(profileDTO.getEmail()).matches()) {
             result.addError("error.email.invalid");
         }
 
-        if (!isBlank(profile.getEmail()) && profileDAO.getAllEmails().contains(profile.getEmail())) {
+        if (!isBlank(profileDTO.getEmail()) && profileDAO.existsProfileByEmail(profileDTO.getEmail())) {
             result.addError("error.email.duplicate");
         }
 
-        if (isBlank(profile.getPassword())) {
+        if (isBlank(profileDTO.getPassword())) {
             result.addError("error.password.invalid");
         }
 
-        if (profile.getBirthDate() != null) {
-            if (getAge(profile.getBirthDate()) < 18 || getAge(profile.getBirthDate()) > 100)
+        if (profileDTO.getBirthDate() != null) {
+            if (getAge(profileDTO.getBirthDate()) < 18 || getAge(profileDTO.getBirthDate()) > 100)
                 result.addError("error.age.invalid");
         }
 

@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.savelying.getdate.dto.ProfileDTO;
+import ru.savelying.getdate.dto.ProfileFilter;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Role;
@@ -98,6 +99,16 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
             profileDTO.setConfirmPassword(req.getParameter("confirmPassword"));
 
         return profileDTO;
+    }
+
+    public ProfileFilter mapToFilter(HttpServletRequest request) {
+        ProfileFilter filter = new ProfileFilter();
+        filter.setNameStartWith(isBlank(request.getParameter("nameStartWith")) ? null : request.getParameter("nameStartWith"));
+        filter.setEmailStartWith(isBlank(request.getParameter("emailStartWith")) ? null : request.getParameter("emailStartWith"));
+        filter.setLowAge(isBlank(request.getParameter("lowAge")) ? null : Integer.parseInt(request.getParameter("lowAge")));
+        filter.setHighAge(isBlank(request.getParameter("highAge")) ? null : Integer.parseInt(request.getParameter("highAge")));
+        filter.setStatus(isBlank(request.getParameter("status")) ? null : Status.valueOf(request.getParameter("status")));
+        return filter;
     }
 
     @SneakyThrows

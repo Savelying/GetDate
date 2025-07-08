@@ -26,7 +26,7 @@ public class EmailValidator {
             result.addError("error.email.invalid");
         }
 
-        if (!isBlank(profileDTO.getNewEmail()) && profileDAO.getAllEmails().contains(profileDTO.getNewEmail())) {
+        if (!isBlank(profileDTO.getNewEmail()) && profileDAO.existsProfileByEmail(profileDTO.getNewEmail())) {
             result.addError("error.email.duplicate");
         }
 

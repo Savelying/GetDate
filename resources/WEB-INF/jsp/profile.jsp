@@ -9,7 +9,7 @@
 <%@ include file="header.jsp" %>
 <div>
     <form method="post" action="/profile?id=${profile.id}" enctype="multipart/form-data">
-            <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" name="_method" value="PUT">
         <table>
             <tr>
                 <td>${wordBundle.getWord("profile")}(id):</td>
@@ -26,10 +26,10 @@
                 <td>${wordBundle.getWord("name")}:</td>
                 <td><input type="text" name="name" value="${profile.name}"></td>
             </tr>
-<!--            <tr>-->
-<!--                <td>${wordBundle.getWord("birth-date")}:</td>-->
-<!--                <td><input type="date" name="birthDate" value="${profile.birthDate}"></td>-->
-<!--            </tr>-->
+            <!--            <tr>-->
+            <!--                <td>${wordBundle.getWord("birth-date")}:</td>-->
+            <!--                <td><input type="date" name="birthDate" value="${profile.birthDate}"></td>-->
+            <!--            </tr>-->
             <tr>
                 <td>${wordBundle.getWord("age")}:</td>
                 <td>${profile.age}</td>
@@ -42,13 +42,9 @@
                 <td>${wordBundle.getWord("gender")}:</td>
                 <td>
                     <select name="gender">
-                        <option value="${profile.gender}" selected hidden>
-                            ${requestScope.profile.gender}
-                        </option>
+                        <option value="${profile.gender}" selected hidden>${wordBundle.getWord(profile.gender)}</option>
                         <c:forEach var="gender" items="${applicationScope.genders}">
-                            <option value="${gender}">
-                                ${wordBundle.getWord(gender)}
-                            </option>
+                            <option value="${gender}">${wordBundle.getWord(gender)}</option>
                         </c:forEach>
                     </select>
                 </td>
@@ -60,7 +56,8 @@
                         <img src="/content/${profile.photoFileName}" height="300"><br>
                         <br>
                     </c:if>
-                    <input type="button" value="${wordBundle.getWord('update')}" onclick="document.getElementById('file').click();" />
+                    <input type="button" value="${wordBundle.getWord('update')}"
+                           onclick="document.getElementById('file').click();"/>
                     <input type="file" name="photo" id="file" style="display: none"></td>
             </tr>
         </table>
@@ -69,11 +66,12 @@
     </form>
     <c:if test="${profile.id != null}">
         <form method="post" action="/profile?id=${profile.id}">
-            <input type = "hidden" name = "_method" value = "delete"/>
-            <input type = "hidden" name="id" value="${profile.id}">
+            <input type="hidden" name="_method" value="delete"/>
+            <input type="hidden" name="id" value="${profile.id}">
             <button type="submit">${wordBundle.getWord("delete")}</button>
         </form>
     </c:if>
+    <a href="/profiles">${wordBundle.getWord("vew-profiles")}</a>
 </div>
 <%@ include file="footer.jsp" %>
 </body>

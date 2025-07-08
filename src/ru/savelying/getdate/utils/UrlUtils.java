@@ -7,15 +7,16 @@ import java.util.Set;
 @UtilityClass
 public class UrlUtils {
     public static final String PROFILE_URL = "/profile";
+    public static final String PROFILES_URL = "/profiles";
     public static final String EMAIL_URL = "/email";
     public static final String LOGIN_URL = "/login";
     public static final String LOGOUT_URL = "/logout";
     public static final String REGISTRATION_URL = "/registration";
     public static final String LANG_URL = "/language";
     public static final String CONTENT_URL = "/content";
-    public static final String BASE_CONTENT_PATH = "D:/!MultiMedia/Pictures/GetDate/Photos/";
     public static final String REST_URL = "/api/v1";
     public static final String LOGIN_REST_URL = REST_URL + LOGIN_URL;
+    public static final String BASE_CONTENT_PATH = ConfigFileUtils.getConfig("app.base.content.path");
 
     public static final Set<String> PRIVATE_PATHS = Set.of(PROFILE_URL, EMAIL_URL);
 

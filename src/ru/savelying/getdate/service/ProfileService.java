@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
+import ru.savelying.getdate.dto.ProfileFilter;
 import ru.savelying.getdate.mapper.ProfileMapper;
 
 import java.util.List;
@@ -66,8 +67,8 @@ public class ProfileService {
         return profileDAO.getProfileById(id).map(profileMapper::mapToDTO);
     }
 
-    public List<ProfileDTO> getProfiles() {
-        return profileDAO.getAllProfiles().stream().map(profileMapper::mapToDTO).toList();
+    public List<ProfileDTO> getProfiles(ProfileFilter filter) {
+        return profileDAO.getAllProfiles(filter).stream().map(profileMapper::mapToDTO).toList();
     }
 
     public Optional<ProfileDTO> login(ProfileDTO profileDTO) {

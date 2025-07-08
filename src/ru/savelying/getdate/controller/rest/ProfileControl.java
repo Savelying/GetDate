@@ -39,7 +39,7 @@ public class ProfileControl extends HttpServlet {
                 Optional<ProfileDTO> optProfileDto = profileService.getProfile(Long.parseLong(req.getParameter("id")));
                 if (optProfileDto.isPresent()) jsonMapper.writeValue(writer, optProfileDto.get());
                 else resp.sendError(SC_NOT_FOUND);
-            } else jsonMapper.writeValue(writer, profileService.getProfiles());
+            }
         } catch (DatabindException ex) {
             req.setAttribute("errors", List.of(ex.getMessage()));
             resp.sendError(SC_BAD_REQUEST);

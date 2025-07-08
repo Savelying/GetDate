@@ -5,7 +5,9 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import ru.savelying.getdate.utils.WordBundle;
+import ru.savelying.getdate.service.bundle.WordBundleEn;
+import ru.savelying.getdate.service.bundle.WordBundleRu;
+import ru.savelying.getdate.service.bundle.WordBundle;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,7 +27,7 @@ public class LanguageFilter implements Filter {
                 .findFirst()
                 .orElse("en");
 
-        WordBundle wordBundle = new WordBundle(lang);
+        WordBundle wordBundle = lang.equals("ru") ? WordBundleRu.getInstance() : WordBundleEn.getInstance();
         request.setAttribute("wordBundle", wordBundle);
 
         filterChain.doFilter(request, response);

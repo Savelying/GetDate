@@ -1,0 +1,11 @@
+app:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    database: getdate
+    username: postgres
+    password: qwerty
+    driver: org.postgresql.Driver
+    query-timeout: 5
+    fetch-size: 0
+    max-rows: 100
+  base-content-path: D:/!MultiMedia/Pictures/GetDate/Photos/
