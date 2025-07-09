@@ -167,6 +167,16 @@ public class ProfileQueryBuilder {
         return this;
     }
 
+    public ProfileQueryBuilder addPageAndPageSize(Integer pageNo, Integer pageSize) {
+        if (queryBuilder.toString().startsWith("select ")) {
+            queryBuilder.append(" offset ? limit ?");
+            int limit = pageSize == null ? 10 : pageSize;
+            args.add(pageNo == null ? 0 : limit * (pageNo - 1));
+            args.add(limit);
+        }
+        return this;
+    }
+
     public Query build() {
         return new Query(queryBuilder.toString(), args);
     }

@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en" xmlns:c="https://jakarta.ee/xml/ns/jakartaee">
 <head>
-    <title>GetDate!</title>
+    <title>GetDate Profile</title>
     <%@ include file="style.html" %>
 </head>
 <body>
@@ -71,7 +71,9 @@
             <button type="submit">${wordBundle.getWord("delete")}</button>
         </form>
     </c:if>
-    <a href="/profiles">${wordBundle.getWord("vew-profiles")}</a>
+    <c:if test="${profile.role == 'ADMIN'}">
+        <a href="/profiles">${wordBundle.getWord("view-profiles")}</a>
+    </c:if>
 </div>
 <%@ include file="footer.jsp" %>
 </body>

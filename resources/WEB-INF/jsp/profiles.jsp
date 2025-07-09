@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en" xmlns:c="https://jakarta.ee/xml/ns/jakartaee">
 <head>
-    <title>GetDate!</title>
+    <title>GetDate Profiles</title>
     <%@ include file="style.html" %>
     <c:url var="baseUrl" value="${requestScope['javax.servlet.forward.servlet_path']}">
         <c:param name="emailStartWith" value="${filter.emailStartWith}"/>
@@ -22,6 +22,9 @@
 <body>
 <%@ include file="header.jsp" %>
 <div>
+    <form action="profiles" method="post">
+        <input type="text" name="n" style="width: 50px"> profiles <button type="submit">generate</button>
+    </form>
     <table>
         <tr>
             <th><a href="${sortById}" class="hiddenLink">id<c:if test="${filter.sortBy == 'id' or filter.sortBy == null}"> ^ </c:if></a></th>
@@ -91,6 +94,25 @@
             </tr>
         </c:forEach>
     </table>
+    <br>
+    <form action="/profiles" method="get">
+        <a>${wordBundle.getWord("page")}</a>
+        <input type="number" name="pageNo" min="1" value="${filter.pageNo}" style="width: 50px">
+        <a>${wordBundle.getWord("by")}</a>
+        <select name="pageSize" class="filterInput" style="width: 50px">
+            <c:forEach var="size" items="${applicationScope.availPageSizes}">
+                <c:if test="${size == filter.pageSize}">
+                    <option value="${size}" selected>${size}</option>
+                </c:if>
+                <c:if test="${size != filter.pageSize}">
+                    <option value="${size}">${size}</option>
+                </c:if>
+            </c:forEach>
+        </select>
+        <a>${wordBundle.getWord("on-page")}</a>
+        <button type="submit">${wordBundle.getWord("view")}</button>
+
+    </form>
 </div>
 <%@ include file="footer.jsp" %>
 </body>

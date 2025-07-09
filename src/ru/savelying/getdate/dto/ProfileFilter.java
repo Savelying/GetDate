@@ -16,4 +16,6 @@ public class ProfileFilter {
     Status status;
     Role role;
     String sortBy;
+    Integer pageNo;
+    Integer pageSize;
 }

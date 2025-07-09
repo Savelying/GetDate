@@ -65,4 +65,8 @@ public class ProfileService {
                 .filter(profile -> profile.getPassword().equals(profileDTO.getPassword()))
                 .map(profileMapper::mapToDTO);
     }
+
+    public void genSomeProfiles(int n) {
+        profileDAO.genSomeProfiles(n);
+    }
 }

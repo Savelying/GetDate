@@ -93,6 +93,8 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         filter.setStatus(isBlank(request.getParameter("status")) ? null : Status.valueOf(request.getParameter("status")));
         filter.setRole(isBlank(request.getParameter("role")) ? null : Role.valueOf(request.getParameter("role")));
         filter.setSortBy(isBlank(request.getParameter("sortBy")) ? "id" : request.getParameter("sortBy"));
+        filter.setPageNo(isBlank(request.getParameter("pageNo")) ? 1 : Integer.parseInt(request.getParameter("pageNo")));
+        filter.setPageSize(isBlank(request.getParameter("pageSize")) ? 10 : Integer.parseInt(request.getParameter("pageSize")));
         return filter;
     }
 

@@ -25,11 +25,37 @@ public class ProfileDAO {
     @Getter
     private final static ProfileDAO instance = new ProfileDAO();
 
+    private List<String> sortableColumns;
+
     //language=POSTGRES-PSQL
     private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     private final static String DELETE = "delete from profiles where id = ?";
     private final static String UPDATE = "update profiles set id = id";
     private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
+
+    //Генерируем пул профилей (юзеров)
+    public void genSomeProfiles(int n) {
+        int i = 0;
+        while (i < n) {
+            Profile profile = new Profile();
+            profile.setName("User " + ++i);
+            profile.setEmail("user-" + i + "@email.com");
+            profile.setPassword("" + i);
+            profile.setInfo("I'm a user №" + i);
+            switch ((int) (Math.random() * 2) + 1) {
+                case 1 -> profile.setGender(Gender.MALE);
+                case 2 -> profile.setGender(Gender.FEMALE);
+                case 3 -> profile.setGender(Gender.OTHER);
+            }
+            profile.setBirthDate(Date.valueOf((1950 + (int) (Math.random() * 55)) + "-" + ((int) (Math.random() * 11) + 1) + "-" + ((int) (Math.random() * 27) + 1)).toLocalDate());
+            profile.setStatus((int) (Math.random() * 2) % 5 == 0 ? Status.ACTIVE : Status.INACTIVE);
+            profile.setRole(Role.USER);
+            createProfile(profile);
+            updateProfile(profile);
+            log.info("Create profile id: {} with name: {}", profile.getId(), profile.getName());
+
+        }
+    }
 
     public Profile createProfile(Profile profile) {
         try (Connection connection = ConnectUtils.getConnnect();
@@ -47,6 +73,7 @@ public class ProfileDAO {
             ResultSet rs = statement.getGeneratedKeys();
             rs.next();
             profile.setId(rs.getLong("id"));
+            log.debug("Insert profile id: {} with name: {}", profile.getId(), profile.getName());
             return profile;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -78,9 +105,8 @@ public class ProfileDAO {
                 .build(profile.getId());
         try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
-            log.info("Final update sql: {}", statement);
             int updateCount = statement.executeUpdate();
-            log.info("Update count : {}", updateCount);
+            log.debug("Update count : {}", updateCount);
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -138,7 +164,8 @@ public class ProfileDAO {
                 .addRole(filter.getRole())
                 .addLowAge(filter.getLowAge())
                 .addHighAge(filter.getHighAge())
-                .addSortBy(filter.getSortBy())
+                .addSortBy(getSortColumn(filter.getSortBy()))
+                .addPageAndPageSize(filter.getPageNo(), filter.getPageSize())
                 .build();
         try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
@@ -149,19 +176,6 @@ public class ProfileDAO {
             List<Profile> profiles = new ArrayList<>();
             while (resultSet.next()) profiles.add(getProfileFromDB(resultSet));
             return profiles;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public List<String> getSortableColumns() {
-        try (Connection connection = getConnnect()) {
-            ResultSet columns = connection.getMetaData().getColumns(null, null, "profiles", null);
-            List<String> sortableColumns = new ArrayList<>();
-            while (columns.next())
-                if (columns.getString("REMARKS") != null && columns.getString("REMARKS").equals("sortable"))
-                    sortableColumns.add(columns.getString("COLUMN_NAME"));
-            return sortableColumns;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -179,6 +193,22 @@ public class ProfileDAO {
 //            throw new RuntimeException(e);
 //        }
 //    }
+
+    private String getSortColumn(String sortColumn) {
+        if (sortableColumns == null) {
+            try (Connection connection = getConnnect()) {
+                ResultSet columns = connection.getMetaData().getColumns(null, null, "profiles", null);
+                sortableColumns = new ArrayList<>();
+                while (columns.next())
+                    if (columns.getString("REMARKS") != null && columns.getString("REMARKS").equals("sortable"))
+                        sortableColumns.add(columns.getString("COLUMN_NAME"));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (sortColumn != null && sortableColumns.contains(sortColumn)) return sortColumn;
+        return "id";
+    }
 
     private Profile getProfileFromDB(ResultSet resultSet) throws SQLException {
         Profile profile = new Profile();

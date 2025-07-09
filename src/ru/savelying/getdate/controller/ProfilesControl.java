@@ -29,4 +29,10 @@ public class ProfilesControl extends HttpServlet {
         req.setAttribute("filter", filter);
         req.getRequestDispatcher(getJspPath(PROFILES_URL)).forward(req, resp);
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        profileService.genSomeProfiles(Integer.parseInt(req.getParameter("n")));
+        doGet(req, resp);
+    }
 }

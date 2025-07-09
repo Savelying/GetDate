@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html lang="en" xmlns:c="https://jakarta.ee/xml/ns/jakartaee">
     <head>
-        <title>Charm Registration</title>
+        <title>GetDate Login</title>
         <%@ include file="style.html" %>
     </head>
     <body>
