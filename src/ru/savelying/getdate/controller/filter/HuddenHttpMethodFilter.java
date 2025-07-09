@@ -6,7 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;
+import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.model.Gender;
+import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
 
 import java.io.IOException;
@@ -19,11 +21,14 @@ import static ru.savelying.getdate.utils.StringUtils.isBlank;
 @WebFilter(value = "/*", dispatcherTypes = {REQUEST, FORWARD})
 public class HuddenHttpMethodFilter implements Filter {
     private static final String METHOD_PARAM = "_method";
+    private final ProfileDAO profileDAO = ProfileDAO.getInstance();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         filterConfig.getServletContext().setAttribute("genders", Gender.values());
         filterConfig.getServletContext().setAttribute("statuses", Status.values());
+        filterConfig.getServletContext().setAttribute("roles", Role.values());
+        filterConfig.getServletContext().setAttribute("profileSortableColumns", profileDAO.getSortableColumns());
 //        if (config.getServletContext().getAttribute("genders") == null) filterConfig.getServletContext().setAttribute("genders", Gender.values());    }
 //        if (config.getServletContext().getAttribute("statuses") == null) filterConfig.getServletContext().setAttribute("statuses", Status.values());    }
     }

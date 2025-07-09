@@ -3,7 +3,6 @@ package ru.savelying.getdate.dao;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.dao.query.ProfileQueryBuilder;
 import ru.savelying.getdate.dao.query.Query;
@@ -16,7 +15,6 @@ import ru.savelying.getdate.utils.ConnectUtils;
 
 import java.sql.*;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.*;
 
 import static ru.savelying.getdate.utils.ConnectUtils.*;
@@ -28,10 +26,10 @@ public class ProfileDAO {
     private final static ProfileDAO instance = new ProfileDAO();
 
     //language=POSTGRES-PSQL
-    private static final String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
+    private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     private final static String DELETE = "delete from profiles where id = ?";
-    private static final String UPDATE = "update profiles set id = id";
-    private static final String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
+    private final static String UPDATE = "update profiles set id = id";
+    private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
 
     public Profile createProfile(Profile profile) {
         try (Connection connection = ConnectUtils.getConnnect();
@@ -76,7 +74,6 @@ public class ProfileDAO {
                 .addGender(profile.getGender())
                 .addBirthDate(profile.getBirthDate())
                 .addStatus(profile.getStatus())
-                .addRole(profile.getRole())
                 .addPhoto(profile.getPhotoFileName())
                 .build(profile.getId());
         try (Connection connection = ConnectUtils.getConnnect();
@@ -138,8 +135,10 @@ public class ProfileDAO {
                 .addNameStartWith(filter.getNameStartWith())
                 .addEmailStartWith(filter.getEmailStartWith())
                 .addStatus(filter.getStatus())
+                .addRole(filter.getRole())
                 .addLowAge(filter.getLowAge())
                 .addHighAge(filter.getHighAge())
+                .addSortBy(filter.getSortBy())
                 .build();
         try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
@@ -155,7 +154,20 @@ public class ProfileDAO {
         }
     }
 
-//    public Set<String> getAllEmails() {
+    public List<String> getSortableColumns() {
+        try (Connection connection = getConnnect()) {
+            ResultSet columns = connection.getMetaData().getColumns(null, null, "profiles", null);
+            List<String> sortableColumns = new ArrayList<>();
+            while (columns.next())
+                if (columns.getString("REMARKS") != null && columns.getString("REMARKS").equals("sortable"))
+                    sortableColumns.add(columns.getString("COLUMN_NAME"));
+            return sortableColumns;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    //    public Set<String> getAllEmails() {
 //        String sql = "select * from profiles";
 //        try (Connection connection = ConnectUtils.getConnnect();
 //             PreparedStatement statement = connection.prepareStatement(sql)) {

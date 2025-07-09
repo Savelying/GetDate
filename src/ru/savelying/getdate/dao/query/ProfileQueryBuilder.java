@@ -159,6 +159,14 @@ public class ProfileQueryBuilder {
         return this;
     }
 
+    public ProfileQueryBuilder addSortBy(String sortBy) {
+        if (queryBuilder.toString().startsWith("select ")) {
+            if (sortBy == null) sortBy = "id";
+            queryBuilder.append(" order by ").append(sortBy);
+        }
+        return this;
+    }
+
     public Query build() {
         return new Query(queryBuilder.toString(), args);
     }

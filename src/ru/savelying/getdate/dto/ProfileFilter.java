@@ -3,6 +3,7 @@ package ru.savelying.getdate.dto;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.experimental.FieldDefaults;
+import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
 
 @Data
@@ -13,4 +14,6 @@ public class ProfileFilter {
     Integer lowAge;
     Integer highAge;
     Status status;
+    Role role;
+    String sortBy;
 }

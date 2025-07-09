@@ -91,6 +91,8 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         filter.setLowAge(isBlank(request.getParameter("lowAge")) ? null : Integer.parseInt(request.getParameter("lowAge")));
         filter.setHighAge(isBlank(request.getParameter("highAge")) ? null : Integer.parseInt(request.getParameter("highAge")));
         filter.setStatus(isBlank(request.getParameter("status")) ? null : Status.valueOf(request.getParameter("status")));
+        filter.setRole(isBlank(request.getParameter("role")) ? null : Role.valueOf(request.getParameter("role")));
+        filter.setSortBy(isBlank(request.getParameter("sortBy")) ? "id" : request.getParameter("sortBy"));
         return filter;
     }
 
