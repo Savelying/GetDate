@@ -86,12 +86,8 @@ public class ProfileControl extends HttpServlet {
         String id = req.getParameter("id");
         if (!isBlank(id) && profileService.deleteProfile(Long.parseLong(id))) {
             ProfileDTO profileDTO = (ProfileDTO) req.getSession().getAttribute("userDetails");
-            if (profileDTO.getId().toString().equals(id)) {
-                req.getSession().invalidate();
-            }
+            if (profileDTO.getId().toString().equals(id)) req.getSession().invalidate();
             resp.setStatus(SC_NO_CONTENT);
-        } else {
-            resp.sendError(SC_NOT_FOUND);
-        }
+        } else resp.sendError(SC_NOT_FOUND);
     }
 }

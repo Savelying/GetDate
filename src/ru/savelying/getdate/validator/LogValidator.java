@@ -7,18 +7,14 @@ import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.model.Profile;
 
 import java.util.Optional;
-import java.util.regex.Pattern;
 
-import static ru.savelying.getdate.utils.StringUtils.isBlank;
+import static ru.savelying.getdate.utils.StringUtils.*;
 
 @NoArgsConstructor
 public class LogValidator {
     @Getter
     private final static LogValidator instance = new LogValidator();
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
-
-    private final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern
-            .compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public ValidationResult validate(ProfileDTO profileDTO) {
         Optional<Profile> profile = profileDAO.getProfileByEmail(profileDTO.getEmail());

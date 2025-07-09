@@ -8,6 +8,8 @@ import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.dto.ProfileFilter;
 import ru.savelying.getdate.mapper.ProfileMapper;
+import ru.savelying.getdate.model.Role;
+import ru.savelying.getdate.model.Status;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,35 +24,22 @@ public class ProfileService {
     private final static ProfileService instance = new ProfileService();
 
     public Long createProfile(ProfileDTO profileDTO) {
+        profileDTO.setStatus(Status.INACTIVE);
+        profileDTO.setRole(Role.USER);
         return profileDAO.createProfile(profileMapper.mapFromDTO(profileDTO)).getId();
     }
 
     @SneakyThrows
     public void updateProfile(ProfileDTO profileDTO) {
-        if (profileDTO.getName() == null)
-            profileDTO.setName(profileDAO.getProfileById(profileDTO.getId()).get().getName());
-
-        if (profileDTO.getEmail() == null)
-            profileDTO.setEmail(profileDAO.getProfileById(profileDTO.getId()).get().getEmail());
-        else if (profileDTO.getNewEmail() != null)
-            profileDTO.setEmail(profileDTO.getNewEmail());
-
-        if (profileDTO.getPassword() == null)
-            profileDTO.setPassword(profileDAO.getProfileById(profileDTO.getId()).get().getPassword());
-        else if (profileDTO.getNewPassword() != null)
-            profileDTO.setPassword(profileDTO.getNewPassword());
-
-        if (profileDTO.getGender() == null)
-            profileDTO.setGender(profileDAO.getProfileById(profileDTO.getId()).get().getGender());
-
-        if (profileDTO.getStatus() == null)
-            profileDTO.setStatus(profileDAO.getProfileById(profileDTO.getId()).get().getStatus());
-
-        if (profileDTO.getBirthDate() == null)
-            profileDTO.setBirthDate(profileDAO.getProfileById(profileDTO.getId()).get().getBirthDate());
-
-        if (profileDTO.getPhotoFileName() == null)
-            profileDTO.setPhotoFileName(profileDAO.getProfileById(profileDTO.getId()).get().getPhotoFileName());
+        if (profileDTO.getName() == null) profileDTO.setName(profileDAO.getProfileById(profileDTO.getId()).get().getName());
+        if (profileDTO.getEmail() == null) profileDTO.setEmail(profileDAO.getProfileById(profileDTO.getId()).get().getEmail());
+        else if (profileDTO.getNewEmail() != null) profileDTO.setEmail(profileDTO.getNewEmail());
+        if (profileDTO.getPassword() == null) profileDTO.setPassword(profileDAO.getProfileById(profileDTO.getId()).get().getPassword());
+        else if (profileDTO.getNewPassword() != null) profileDTO.setPassword(profileDTO.getNewPassword());
+        if (profileDTO.getGender() == null) profileDTO.setGender(profileDAO.getProfileById(profileDTO.getId()).get().getGender());
+        if (profileDTO.getStatus() == null) profileDTO.setStatus(profileDAO.getProfileById(profileDTO.getId()).get().getStatus());
+        if (profileDTO.getBirthDate() == null) profileDTO.setBirthDate(profileDAO.getProfileById(profileDTO.getId()).get().getBirthDate());
+        if (profileDTO.getPhotoFileName() == null) profileDTO.setPhotoFileName(profileDAO.getProfileById(profileDTO.getId()).get().getPhotoFileName());
         else {
             profileDTO.setPhotoFileName(profileDTO.getId() + "-" + profileDTO.getPhotoImage().getSubmittedFileName());
             contentService.uploadPhoto(profileDTO.getPhotoFileName(), profileDTO.getPhotoImage().getInputStream());

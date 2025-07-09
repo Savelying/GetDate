@@ -12,8 +12,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
-import static java.nio.file.StandardOpenOption.CREATE;
-import static java.nio.file.StandardOpenOption.TRUNCATE_EXISTING;
 import static ru.savelying.getdate.utils.UrlUtils.BASE_CONTENT_PATH;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

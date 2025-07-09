@@ -29,11 +29,6 @@ public class LoginControl extends HttpServlet {
     private final ObjectMapper objectMapper = new ObjectMapper();
     private final LogValidator validator = LogValidator.getInstance();
 
-//    @Override
-//    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//        req.getRequestDispatcher(getJspPath(LOGIN_URL)).forward(req, resp);
-//    }
-
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try (BufferedReader reader = req.getReader()) {

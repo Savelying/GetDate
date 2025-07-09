@@ -1,11 +1,13 @@
 package ru.savelying.getdate.utils;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import ru.savelying.getdate.dao.query.Query;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.List;
 
 @UtilityClass
 public class ConnectUtils {
@@ -31,5 +33,12 @@ public class ConnectUtils {
 
     public static Connection getConnnect() throws SQLException {
         return DriverManager.getConnection(dbURL + dbName, dbUser, dbPassword);
+    }
+
+    public static PreparedStatement getPreparedStatement(Connection connection, Query query) throws SQLException {
+        PreparedStatement statement = connection.prepareStatement(query.sql());
+        List<Object> args = query.args();
+        for (int i = 0; i < args.size(); i++) statement.setObject(i + 1, args.get(i));
+        return statement;
     }
 }

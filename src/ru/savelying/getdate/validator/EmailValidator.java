@@ -5,19 +5,13 @@ import lombok.NoArgsConstructor;
 import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
 
-import java.util.regex.Pattern;
-
-import static ru.savelying.getdate.utils.DateTimeUtils.getAge;
-import static ru.savelying.getdate.utils.StringUtils.isBlank;
+import static ru.savelying.getdate.utils.StringUtils.*;
 
 @NoArgsConstructor
 public class EmailValidator {
     @Getter
     private final static EmailValidator instance = new EmailValidator();
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
-
-    private final static Pattern VALID_EMAIL_ADDRESS_REGEX = Pattern
-            .compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     public ValidationResult validate(ProfileDTO profileDTO) {
         ValidationResult result = new ValidationResult();
