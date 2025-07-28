@@ -27,6 +27,15 @@ public class ProfileQueryBuilder {
         return this;
     }
 
+    public ProfileQueryBuilder addFromId(Long id) {
+        if (queryBuilder.toString().startsWith("select ")) {
+            if (id == null) return this;
+            queryBuilder.append(" and likes.from_id = ?");
+            args.add(id);
+        }
+        return this;
+    }
+
     public ProfileQueryBuilder addEmail(String email) {
         if (queryBuilder.toString().startsWith("select ")) {
             if (email == null) return this;

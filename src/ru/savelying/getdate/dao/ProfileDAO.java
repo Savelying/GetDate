@@ -27,11 +27,30 @@ public class ProfileDAO {
 
     private List<String> sortableColumns;
 
-    //language=POSTGRES-PSQL
     private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     private final static String DELETE = "delete from profiles where id = ?";
     private final static String UPDATE = "update profiles set id = id";
     private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
+    //language=PostgreSQL
+    private final static String SUITABLE = """
+            select * from (with current_user_profile as (select id, gender, birth_date from profiles where id = ?)
+                select distinct * from profiles p
+                    cross join current_user_profile cup left join likes l on p.id = l.to_id
+                        where (l.from_id is null or l.from_id != cup.id)
+                            and p.id != cup.id
+                            and p.gender = case when cup.gender = 'MALE' then 'FEMALE' else 'MALE' end
+                            and p.birth_date between (cup.birth_date - interval '5 years')
+                                                and (cup.birth_date + interval '5 years')
+                            and p.status = 'ACTIVE'
+                        ) as alias order by random() limit ?
+            """;
+    //language=PostgreSQL
+    private final static String MATCHES = "select * from profiles join likes on profiles.id = likes.to_id where match = true";
+//    private final static String MATCHES = """
+//            select * from profiles p
+//                join likes l on p.id = l.to_id where l.from_id = ? and l.match = true
+//            order by l.created_date desc offset ? limit ?
+//            """;
 
     //Генерируем пул профилей (юзеров)
     public void genSomeProfiles(int n) {
@@ -58,7 +77,7 @@ public class ProfileDAO {
     }
 
     public Profile createProfile(Profile profile) {
-        try (Connection connection = ConnectUtils.getConnnect();
+        try (Connection connection = getConnnect();
              PreparedStatement statement = connection.prepareStatement(INSERT, Statement.RETURN_GENERATED_KEYS)) {
             statement.setString(1, profile.getEmail());
             statement.setString(2, profile.getPassword());
@@ -66,6 +85,7 @@ public class ProfileDAO {
             statement.setDate(4, Date.valueOf(profile.getBirthDate()));
             statement.setString(5, profile.getStatus().toString());
             statement.setString(6, profile.getRole().toString());
+
 //            statement.executeUpdate("create table profiles(id bigserial not null primary key, email varchar not null unique, password varchar not null, name varchar, info text, gender varchar, birth_date date not null, status varchar not null, role varchar not null, reg_date timestamp not null default current_timestamp)");
 
             int insertCount = statement.executeUpdate();
@@ -81,7 +101,7 @@ public class ProfileDAO {
     }
 
     public boolean deleteProfile(Long id) {
-        try (Connection connection = ConnectUtils.getConnnect();
+        try (Connection connection = getConnnect();
              PreparedStatement statement = connection.prepareStatement(DELETE)) {
             statement.setLong(1, id);
             int deleteCount = statement.executeUpdate();
@@ -104,7 +124,7 @@ public class ProfileDAO {
                 .addPhoto(profile.getPhotoFileName())
                 .build(profile.getId());
         try (Connection connection = ConnectUtils.getConnnect();
-             PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
+             PreparedStatement statement = getPreparedStatement(connection, query)) {
             int updateCount = statement.executeUpdate();
             log.debug("Update count : {}", updateCount);
 
@@ -117,8 +137,8 @@ public class ProfileDAO {
         Query query = new ProfileQueryBuilder(SELECT)
                 .addId(id)
                 .build();
-        try (Connection connection = ConnectUtils.getConnnect();
-             PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = getPreparedStatement(connection, query)) {
             ResultSet rs = statement.executeQuery();
             Profile profile = null;
             if (rs.next()) profile = getProfileFromDB(rs);
@@ -132,8 +152,8 @@ public class ProfileDAO {
         Query query = new ProfileQueryBuilder(SELECT)
                 .addEmail(email)
                 .build();
-        try (Connection connection = ConnectUtils.getConnnect();
-             PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = getPreparedStatement(connection, query)) {
             ResultSet resultSet = statement.executeQuery();
             Profile profile = null;
             if (resultSet.next()) profile = getProfileFromDB(resultSet);
@@ -147,8 +167,8 @@ public class ProfileDAO {
         Query query = new ProfileQueryBuilder(SELECT)
                 .addEmail(email)
                 .build();
-        try (Connection connection = ConnectUtils.getConnnect();
-             PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = getPreparedStatement(connection, query)) {
             ResultSet resultSet = statement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
@@ -156,19 +176,19 @@ public class ProfileDAO {
         }
     }
 
-    public List<Profile> getAllProfiles(ProfileFilter filter) {
+    public List<Profile> getAllProfiles(ProfileFilter profileFilter) {
         Query query = new ProfileQueryBuilder(SELECT)
-                .addNameStartWith(filter.getNameStartWith())
-                .addEmailStartWith(filter.getEmailStartWith())
-                .addStatus(filter.getStatus())
-                .addRole(filter.getRole())
-                .addLowAge(filter.getLowAge())
-                .addHighAge(filter.getHighAge())
-                .addSortBy(getSortColumn(filter.getSortBy()))
-                .addPageAndPageSize(filter.getPageNo(), filter.getPageSize())
+                .addNameStartWith(profileFilter.getNameStartWith())
+                .addEmailStartWith(profileFilter.getEmailStartWith())
+                .addStatus(profileFilter.getStatus())
+                .addRole(profileFilter.getRole())
+                .addLowAge(profileFilter.getLowAge())
+                .addHighAge(profileFilter.getHighAge())
+                .addSortBy(getSortColumn(profileFilter.getSortBy()))
+                .addPageAndPageSize(profileFilter.getPageNo(), profileFilter.getPageSize())
                 .build();
-        try (Connection connection = ConnectUtils.getConnnect();
-             PreparedStatement statement = ConnectUtils.getPreparedStatement(connection, query)) {
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = getPreparedStatement(connection, query)) {
             statement.setQueryTimeout(dbQueryTimeout);
             statement.setFetchSize(dbFetchSize);
             statement.setMaxRows(dbMaxRows);
@@ -181,33 +201,44 @@ public class ProfileDAO {
         }
     }
 
-    //    public Set<String> getAllEmails() {
-//        String sql = "select * from profiles";
-//        try (Connection connection = ConnectUtils.getConnnect();
-//             PreparedStatement statement = connection.prepareStatement(sql)) {
-//            ResultSet resultSet = statement.executeQuery();
-//            Set<String> emails = new HashSet<>();
-//            while (resultSet.next()) emails.add(getProfileFromDB(resultSet).getEmail());
-//            return emails;
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
-
-    private String getSortColumn(String sortColumn) {
-        if (sortableColumns == null) {
-            try (Connection connection = getConnnect()) {
-                ResultSet columns = connection.getMetaData().getColumns(null, null, "profiles", null);
-                sortableColumns = new ArrayList<>();
-                while (columns.next())
-                    if (columns.getString("REMARKS") != null && columns.getString("REMARKS").equals("sortable"))
-                        sortableColumns.add(columns.getString("COLUMN_NAME"));
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
+    public Optional<Profile> getSuitableProfile(Long id, int limit) {
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = connection.prepareStatement(SUITABLE)) {
+            statement.setLong(1, id);
+            statement.setInt(2, Math.min(limit, 1));
+            ResultSet resultSet = statement.executeQuery();
+            Profile profile = null;
+            if (resultSet.next()) profile = getProfileFromDB(resultSet);
+            return Optional.ofNullable(profile);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        if (sortColumn != null && sortableColumns.contains(sortColumn)) return sortColumn;
-        return "id";
+    }
+
+    public List<Profile> getMatches(Long id, ProfileFilter profileFilter) {
+        Query query = new ProfileQueryBuilder(MATCHES)
+                .addFromId(id)
+                .addNameStartWith(profileFilter.getNameStartWith())
+                .addLowAge(profileFilter.getLowAge())
+                .addHighAge(profileFilter.getHighAge())
+                .addSortBy(getSortColumn(profileFilter.getSortBy()))
+                .addPageAndPageSize(profileFilter.getPageNo(), profileFilter.getPageSize())
+                .build();
+        System.out.println(query);
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = getPreparedStatement(connection, query)) {
+            int pageSize = profileFilter.getPageSize() == null ? 10 : profileFilter.getPageSize();
+            int pageNo = profileFilter.getPageNo() == null ? 0 : (profileFilter.getPageNo() - 1) * pageSize;
+            statement.setLong(1, id);
+            statement.setInt(2, pageNo);
+            statement.setInt(3, pageSize);
+            ResultSet resultSet = statement.executeQuery();
+            List<Profile> profiles = new ArrayList<>();
+            while (resultSet.next()) profiles.add(getProfileFromDB(resultSet));
+            return profiles;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Profile getProfileFromDB(ResultSet resultSet) throws SQLException {
@@ -224,6 +255,22 @@ public class ProfileDAO {
         if (resultSet.getString("role") != null) profile.setRole(Role.valueOf(resultSet.getString("role")));
         if (resultSet.getString("photo") != null) profile.setPhotoFileName(resultSet.getString("photo"));
         return profile;
+    }
+
+    private String getSortColumn(String sortColumn) {
+        if (sortableColumns == null) {
+            try (Connection connection = getConnnect()) {
+                ResultSet columns = connection.getMetaData().getColumns(null, null, "profiles", null);
+                sortableColumns = new ArrayList<>();
+                while (columns.next())
+                    if (columns.getString("REMARKS") != null && columns.getString("REMARKS").equals("sortable"))
+                        sortableColumns.add(columns.getString("COLUMN_NAME"));
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+        if (sortColumn != null && sortableColumns.contains(sortColumn)) return sortColumn;
+        return "id";
     }
 }
 

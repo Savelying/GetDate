@@ -19,7 +19,6 @@
             <tr>
                 <td>${wordBundle.getWord("email")}:</td>
                 <td><a href="/email?id=${profile.id}">${profile.email}</a>
-                    <a href="/profile/pdf?id=${profile.id}">${wordBundle.getWord("download-profile")}</a>
                 </td>
             </tr>
             <tr>
@@ -53,7 +52,7 @@
                 <td>${wordBundle.getWord("photo")}:</td>
                 <td>
                     <c:if test="${profile.photoFileName != null}">
-                        <img src="/content/${profile.photoFileName}" height="300"><br>
+                        <img src="/content/${profile.photoFileName}" width="300"><br>
                         <br>
                     </c:if>
                     <input type="button" value="${wordBundle.getWord('update')}"
@@ -67,10 +66,16 @@
     <c:if test="${profile.id != null}">
         <form method="post" action="/profile?id=${profile.id}">
             <input type="hidden" name="_method" value="delete"/>
-            <input type="hidden" name="id" value="${profile.id}">
+            <input type="hidden" name="id" value="${profile.id}"/>
             <button type="submit">${wordBundle.getWord("delete")}</button>
         </form>
+        <form method="get" action="/profile/pdf?id=${profile.id}">
+            <input type="hidden" name="id" value="${profile.id}"/>
+            <button type="submit">${wordBundle.getWord("download")}</button>
+        </form>
+        <a href="/matches">${wordBundle.getWord("view-matches")}</a>
     </c:if>
+    <br>
     <c:if test="${profile.role == 'ADMIN'}">
         <a href="/profiles">${wordBundle.getWord("view-profiles")}</a>
     </c:if>

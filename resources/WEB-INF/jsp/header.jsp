@@ -12,11 +12,12 @@
             <a href="/profile?id=${sessionScope.user.id}">(${sessionScope.user.name})</a><br>
             <button type="submit">${wordBundle.getWord("logout")}</button>
         </form>
-    </c:if><c:if test="${sessionScope.user == null}">
-    <form method="get" action="/login">
-        <button type="submit">${wordBundle.getWord("to-login")}</button>
-    </form>
-</c:if>
+    </c:if>
+    <c:if test="${sessionScope.user == null}">
+        <form method="get" action="/login">
+            <button type="submit">${wordBundle.getWord("to-login")}</button>
+        </form>
+    </c:if>
     <hr>
 </div>
 </html>

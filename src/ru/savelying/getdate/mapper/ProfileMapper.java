@@ -9,8 +9,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
-import ru.savelying.getdate.dto.ProfileDTO;
-import ru.savelying.getdate.dto.ProfileFilter;
+import ru.savelying.getdate.dto.*;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Role;
@@ -96,6 +95,27 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         filter.setPageNo(isBlank(request.getParameter("pageNo")) ? 1 : Integer.parseInt(request.getParameter("pageNo")));
         filter.setPageSize(isBlank(request.getParameter("pageSize")) ? 10 : Integer.parseInt(request.getParameter("pageSize")));
         return filter;
+    }
+
+    public LikeDTO mapToLike(HttpServletRequest req) {
+        LikeDTO likeDTO = new LikeDTO();
+        ProfileDTO userDTO = (ProfileDTO) req.getSession().getAttribute("user");
+        likeDTO.setFromId(userDTO.getId());
+        if (req.getParameter("action") != null) likeDTO.setToId(Long.parseLong(req.getParameter("toId")));
+        if (req.getParameter("action") != null) likeDTO.setAction(Action.valueOf(req.getParameter("action")));
+        else likeDTO.setAction(Action.SKIP);
+        return likeDTO;
+    }
+
+    public ProfileView mapToView(Profile obj) {
+        ProfileView profileView = new ProfileView();
+        profileView.setId(obj.getId());
+        profileView.setName(obj.getName());
+        profileView.setInfo(obj.getInfo());
+        profileView.setGender(obj.getGender());
+        if (obj.getBirthDate() != null) profileView.setAge(getAge(obj.getBirthDate()));
+        profileView.setPhotoFileName(obj.getPhotoFileName());
+        return profileView;
     }
 
     @SneakyThrows

@@ -111,7 +111,6 @@
         </select>
         <a>${wordBundle.getWord("on-page")}</a>
         <button type="submit">${wordBundle.getWord("view")}</button>
-
     </form>
 </div>
 <%@ include file="footer.jsp" %>

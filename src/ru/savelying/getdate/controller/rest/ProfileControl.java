@@ -85,7 +85,7 @@ public class ProfileControl extends HttpServlet {
     protected void doDelete(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String id = req.getParameter("id");
         if (!isBlank(id) && profileService.deleteProfile(Long.parseLong(id))) {
-            ProfileDTO profileDTO = (ProfileDTO) req.getSession().getAttribute("userDetails");
+            ProfileDTO profileDTO = (ProfileDTO) req.getSession().getAttribute("user");
             if (profileDTO.getId().toString().equals(id)) req.getSession().invalidate();
             resp.setStatus(SC_NO_CONTENT);
         } else resp.sendError(SC_NOT_FOUND);

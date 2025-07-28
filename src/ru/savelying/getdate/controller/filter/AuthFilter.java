@@ -23,7 +23,7 @@ public class AuthFilter implements Filter {
 
         if (!request.getRequestURI().equals(LOGIN_REST_URL) && PRIVATE_PATHS.stream().anyMatch(request.getRequestURI()::startsWith)) {
             if (user != null) {
-                if (user.getRole() == Role.ADMIN || (!request.getRequestURI().startsWith(REST_URL) && user.getId().toString().equals(request.getParameter("id")))) {
+                if (request.getRequestURI().startsWith(GETDATE_URL) || user.getRole() == Role.ADMIN || (!request.getRequestURI().startsWith(REST_URL) && user.getId().toString().equals(request.getParameter("id")))) {
                     filterChain.doFilter(request, response);
                 } else {
                     String message = String.format("User with id %s and role %s try to use %s endpoint with query parameter %s",

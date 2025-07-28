@@ -69,4 +69,9 @@ public class ProfileService {
     public void genSomeProfiles(int n) {
         profileDAO.genSomeProfiles(n);
     }
+
+    public List<ProfileDTO> getMatches(Long id, ProfileFilter profileFilter) {
+        if (id == null) return List.of();
+        return profileDAO.getMatches(id, profileFilter).stream().map(profileMapper::mapToDTO).toList();
+    }
 }
