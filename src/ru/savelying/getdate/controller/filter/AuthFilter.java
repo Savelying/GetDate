@@ -21,7 +21,7 @@ public class AuthFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) servletResponse;
         ProfileDTO user = (ProfileDTO) request.getSession().getAttribute("user");
 
-        if (!request.getRequestURI().equals(LOGIN_REST_URL) && PRIVATE_PATHS.stream().anyMatch(request.getRequestURI()::startsWith)) {
+        if (!request.getRequestURI().equals(REST_URL + LOGIN_URL) && PRIVATE_PATHS.stream().anyMatch(request.getRequestURI()::startsWith)) {
             if (user != null) {
                 if (request.getRequestURI().startsWith(GETDATE_URL) || user.getRole() == Role.ADMIN || (!request.getRequestURI().startsWith(REST_URL) && user.getId().toString().equals(request.getParameter("id")))) {
                     filterChain.doFilter(request, response);

@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
 import java.io.Writer;
 
 import static com.fasterxml.jackson.databind.DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT;
@@ -25,5 +26,9 @@ public class JsonMapper {
 
     public <T> T readValue(InputStream in, Class<T> valueType) throws IOException {
         return objectMapper.readValue(in, valueType);
+    }
+
+    public <T> T readValue(Reader src, Class<T> valueType) throws IOException {
+        return objectMapper.readValue(src, valueType);
     }
 }

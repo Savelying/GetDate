@@ -49,7 +49,7 @@ public class ProfileControl extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try (BufferedReader reader = req.getReader()) {
-            ProfileDTO profileDTO = profileMapper.getProfileDTO(req);
+            ProfileDTO profileDTO = jsonMapper.readValue(reader, ProfileDTO.class);
             if (validator.validate(profileDTO).isValid()) {
                 Long id = profileService.createProfile(profileDTO);
                 log.info("Account create successful with email={} and id={}", profileDTO.getEmail(), id);

@@ -7,6 +7,7 @@ import lombok.SneakyThrows;
 import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.dto.ProfileFilter;
+import ru.savelying.getdate.dto.ProfileView;
 import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
@@ -70,8 +71,8 @@ public class ProfileService {
         profileDAO.genSomeProfiles(n);
     }
 
-    public List<ProfileDTO> getMatches(Long id, ProfileFilter profileFilter) {
+    public List<ProfileView> getMatches(Long id, ProfileFilter profileFilter) {
         if (id == null) return List.of();
-        return profileDAO.getMatches(id, profileFilter).stream().map(profileMapper::mapToDTO).toList();
+        return profileDAO.getMatches(id, profileFilter).stream().map(profileMapper::mapToView).toList();
     }
 }
