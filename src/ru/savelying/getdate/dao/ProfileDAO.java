@@ -27,10 +27,6 @@ public class ProfileDAO {
 
     private List<String> sortableColumns;
 
-    private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
-    private final static String DELETE = "delete from profiles where id = ?";
-    private final static String UPDATE = "update profiles set id = id";
-    private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
     //language=PostgreSQL
     private final static String SUITABLE = """
             select * from (with current_user_profile as (select id, gender, birth_date from profiles where id = ?)
@@ -39,18 +35,16 @@ public class ProfileDAO {
                         where (l.from_id is null or l.from_id != cup.id)
                             and p.id != cup.id
                             and p.gender = case when cup.gender = 'MALE' then 'FEMALE' else 'MALE' end
-                            and p.birth_date between (cup.birth_date - interval '5 years')
-                                                and (cup.birth_date + interval '5 years')
+                            and p.birth_date between (cup.birth_date - interval '2 years')
+                                                and (cup.birth_date + interval '10 years')
                             and p.status = 'ACTIVE'
                         ) as alias order by random() limit ?
             """;
-    //language=PostgreSQL
+    private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
+    private final static String DELETE = "delete from profiles where id = ?";
+    private final static String UPDATE = "update profiles set id = id";
+    private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
     private final static String MATCHES = "select * from profiles join likes on profiles.id = likes.to_id where match = true";
-//    private final static String MATCHES = """
-//            select * from profiles p
-//                join likes l on p.id = l.to_id where l.from_id = ? and l.match = true
-//            order by l.created_date desc offset ? limit ?
-//            """;
 
     //Генерируем пул профилей (юзеров)
     public void genSomeProfiles(int n) {
@@ -224,14 +218,8 @@ public class ProfileDAO {
                 .addSortBy(getSortColumn(profileFilter.getSortBy()))
                 .addPageAndPageSize(profileFilter.getPageNo(), profileFilter.getPageSize())
                 .build();
-        System.out.println(query);
         try (Connection connection = getConnnect();
              PreparedStatement statement = getPreparedStatement(connection, query)) {
-            int pageSize = profileFilter.getPageSize() == null ? 10 : profileFilter.getPageSize();
-            int pageNo = profileFilter.getPageNo() == null ? 0 : (profileFilter.getPageNo() - 1) * pageSize;
-            statement.setLong(1, id);
-            statement.setInt(2, pageNo);
-            statement.setInt(3, pageSize);
             ResultSet resultSet = statement.executeQuery();
             List<Profile> profiles = new ArrayList<>();
             while (resultSet.next()) profiles.add(getProfileFromDB(resultSet));
