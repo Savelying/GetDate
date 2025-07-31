@@ -1,13 +1,15 @@
 package ru.savelying.getdate.utils;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import ru.savelying.getdate.dao.query.Query;
-
+import java.io.Closeable;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import javax.sql.DataSource;
+
 
 @UtilityClass
 public class ConnectUtils {
@@ -20,19 +22,28 @@ public class ConnectUtils {
     public static final int dbQueryTimeout = Integer.parseInt(ConfigFileUtils.getConfig("app.datasource.query.timeout") != null ? ConfigFileUtils.getConfig("app.datasource.query.timeout") : "10");
     public static final int dbFetchSize = Integer.parseInt(ConfigFileUtils.getConfig("app.datasource.fetch.size") != null ? ConfigFileUtils.getConfig("app.datasource.fetch.size") : "100");
     public static final int dbMaxRows = Integer.parseInt(ConfigFileUtils.getConfig("app.datasource.max.rows") != null ? ConfigFileUtils.getConfig("app.datasource.max.rows") : "1000");
+    public static final int dbPoolSize = Integer.parseInt(ConfigFileUtils.getConfig("app.datasource.pool.size") != null ? ConfigFileUtils.getConfig("app.datasource.pool.size") : "10");
+
+    private static DataSource dataSource;
 
     static {
-        if (dbDriver != null) {
-            try {
-                Class.forName(dbDriver);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }
+        init();
     }
 
-    public static Connection getConnnect() throws SQLException {
-        return DriverManager.getConnection(dbURL + dbName, dbUser, dbPassword);
+    @SneakyThrows
+    private static void init() {
+        Class.forName(dbDriver);
+        dataSource = new CustomDataSource();
+    }
+
+    @SneakyThrows
+    public static Connection getConnnect() {
+        return dataSource.getConnection();
+    }
+
+    @SneakyThrows
+    public static void closePool() {
+        ((Closeable) dataSource).close();
     }
 
     public static PreparedStatement getPreparedStatement(Connection connection, Query query) throws SQLException {

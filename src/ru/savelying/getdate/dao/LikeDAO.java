@@ -3,6 +3,7 @@ package ru.savelying.getdate.dao;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.dto.Action;
 import ru.savelying.getdate.dto.LikeDTO;
@@ -20,14 +21,22 @@ public class LikeDAO {
     @Getter
     private final static LikeDAO instance = new LikeDAO();
 
-    //language=POSTGRES-PSQL
+    //language=PostgreSQL
     private final static String SELECT = "select \"like\" from likes where from_id = ? and to_id = ?";
-    private final static String INSERT = "insert into likes(from_id, to_id, \"like\", match) VALUES (?, ?, ?, ?) on conflict(from_id, to_id) do update set \"like\" = ?, match = ?";
+    //language=PostgreSQL
+    private final static String INSERT = "insert into likes(from_id, to_id, \"like\", match) VALUES (?, ?, ?, ?) on conflict(from_id, to_id) do update set \"like\" = ?, match = ?, created_date = current_timestamp";
 
+    @SneakyThrows
     public void writeLike(LikeDTO likeDTO) {
-        try (Connection connection = getConnnect();
-             PreparedStatement selectStatement = connection.prepareStatement(SELECT);
-             PreparedStatement insertStatement = connection.prepareStatement(INSERT)) {
+        Connection connection = null;
+        PreparedStatement selectStatement = null;
+        PreparedStatement insertStatement = null;
+        try {
+            connection = getConnnect();
+            connection.setAutoCommit(false);
+            connection.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
+            selectStatement = connection.prepareStatement(SELECT);
+            insertStatement = connection.prepareStatement(INSERT);
             boolean isLike = likeDTO.getAction() == Action.LIKE;
             boolean isMatch = false;
             if (isLike) {
@@ -35,15 +44,31 @@ public class LikeDAO {
                 selectStatement.setObject(2, likeDTO.getFromId());
                 ResultSet resultSet = selectStatement.executeQuery();
                 if (resultSet.next()) isMatch = resultSet.getBoolean("like");
+            } else {
+                insertToLikes(insertStatement, likeDTO.getFromId(), likeDTO.getToId(), isLike, isMatch);
+                insertStatement.addBatch();
             }
             if (isMatch) {
                 insertToLikes(insertStatement, likeDTO.getFromId(), likeDTO.getToId(), isLike, isMatch);
+                System.out.println(insertStatement);
+                insertStatement.addBatch();
                 insertToLikes(insertStatement, likeDTO.getToId(), likeDTO.getFromId(), isLike, isMatch);
+                System.out.println(insertStatement);
+                insertStatement.addBatch();
             } else {
                 insertToLikes(insertStatement, likeDTO.getFromId(), likeDTO.getToId(), isLike, isMatch);
+                System.out.println(insertStatement);
+                insertStatement.addBatch();
             }
-        } catch (SQLException e) {
+            insertStatement.executeBatch();
+            connection.commit();
+        } catch (Exception e) {
+            if (connection != null) connection.rollback();
             throw new RuntimeException(e);
+        } finally {
+            if (selectStatement != null) selectStatement.close();
+            if (insertStatement != null) insertStatement.close();
+            if (connection != null) connection.close();
         }
     }
 
@@ -54,6 +79,5 @@ public class LikeDAO {
         insertStatement.setObject(4, isMatch);
         insertStatement.setObject(5, isLike);
         insertStatement.setObject(6, isMatch);
-        insertStatement.executeUpdate();
     }
 }

@@ -22,15 +22,13 @@ import static ru.savelying.getdate.utils.StringUtils.isBlank;
 public class HuddenHttpMethodFilter implements Filter {
     private static final String METHOD_PARAM = "_method";
 
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        filterConfig.getServletContext().setAttribute("genders", Gender.values());
-        filterConfig.getServletContext().setAttribute("statuses", Status.values());
-        filterConfig.getServletContext().setAttribute("roles", Role.values());
-        filterConfig.getServletContext().setAttribute("availPageSizes", List.of(10, 20, 50, 100));
-//        if (config.getServletContext().getAttribute("genders") == null) filterConfig.getServletContext().setAttribute("genders", Gender.values());    }
-//        if (config.getServletContext().getAttribute("statuses") == null) filterConfig.getServletContext().setAttribute("statuses", Status.values());    }
-    }
+//    @Override
+//    public void init(FilterConfig filterConfig) throws ServletException {
+//        filterConfig.getServletContext().setAttribute("genders", Gender.values());
+//        filterConfig.getServletContext().setAttribute("statuses", Status.values());
+//        filterConfig.getServletContext().setAttribute("roles", Role.values());
+//        filterConfig.getServletContext().setAttribute("availPageSizes", List.of(10, 20, 50, 100));
+//    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {

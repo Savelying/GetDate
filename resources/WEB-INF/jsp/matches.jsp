@@ -36,7 +36,7 @@
                     <td><a href="/profile?id=${profile.id}">${profile.name}</a></td>
                     <td style="text-align: center">${profile.age}</td>
                     <td>${profile.info}</td>
-                    <td> <img src="/content/${profile.photoFileName}" width="50"></td>
+                    <td style="align-content: center"><img src="/content/${profile.photoFileName}" width="50"></td>
                 </form>
             </tr>
         </c:forEach>

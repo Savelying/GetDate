@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import ru.savelying.getdate.dao.query.ProfileQueryBuilder;
 import ru.savelying.getdate.dao.query.Query;
 import ru.savelying.getdate.dto.ProfileFilter;
+import ru.savelying.getdate.dto.ProfileView;
+import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Role;
@@ -24,6 +26,7 @@ import static ru.savelying.getdate.utils.ConnectUtils.*;
 public class ProfileDAO {
     @Getter
     private final static ProfileDAO instance = new ProfileDAO();
+    private final static ProfileMapper profileMapper = ProfileMapper.getInstance();
 
     private List<String> sortableColumns;
 
@@ -35,8 +38,8 @@ public class ProfileDAO {
                         where (l.from_id is null or l.from_id != cup.id)
                             and p.id != cup.id
                             and p.gender = case when cup.gender = 'MALE' then 'FEMALE' else 'MALE' end
-                            and p.birth_date between (cup.birth_date - interval '2 years')
-                                                and (cup.birth_date + interval '10 years')
+                            and p.birth_date between (cup.birth_date - interval '5 years')
+                                                and (cup.birth_date + interval '5 years')
                             and p.status = 'ACTIVE'
                         ) as alias order by random() limit ?
             """;
@@ -183,9 +186,6 @@ public class ProfileDAO {
                 .build();
         try (Connection connection = getConnnect();
              PreparedStatement statement = getPreparedStatement(connection, query)) {
-            statement.setQueryTimeout(dbQueryTimeout);
-            statement.setFetchSize(dbFetchSize);
-            statement.setMaxRows(dbMaxRows);
             ResultSet resultSet = statement.executeQuery();
             List<Profile> profiles = new ArrayList<>();
             while (resultSet.next()) profiles.add(getProfileFromDB(resultSet));
@@ -208,6 +208,20 @@ public class ProfileDAO {
             throw new RuntimeException(e);
         }
     }
+
+//    public List<ProfileView> getSuitableProfiles(Long id, int limit) {
+//        try (Connection connection = getConnnect();
+//             PreparedStatement statement = connection.prepareStatement(SUITABLE)) {
+//            statement.setLong(1, id);
+//            statement.setInt(2, Math.min(limit, 1));
+//            ResultSet resultSet = statement.executeQuery();
+//            List<ProfileView> profiles = new ArrayList<>();
+//            while (resultSet.next()) profiles.add(profileMapper.mapToView(getProfileFromDB(resultSet)));
+//            return profiles;
+//        } catch (SQLException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
     public List<Profile> getMatches(Long id, ProfileFilter profileFilter) {
         Query query = new ProfileQueryBuilder(MATCHES)
@@ -237,8 +251,7 @@ public class ProfileDAO {
         if (resultSet.getString("name") != null) profile.setName(resultSet.getString("name"));
         if (resultSet.getString("info") != null) profile.setInfo(resultSet.getString("info"));
         if (resultSet.getString("gender") != null) profile.setGender(Gender.valueOf(resultSet.getString("gender")));
-        if (resultSet.getString("birth_date") != null)
-            profile.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
+        if (resultSet.getString("birth_date") != null) profile.setBirthDate(resultSet.getDate("birth_date").toLocalDate());
         if (resultSet.getString("status") != null) profile.setStatus(Status.valueOf(resultSet.getString("status")));
         if (resultSet.getString("role") != null) profile.setRole(Role.valueOf(resultSet.getString("role")));
         if (resultSet.getString("photo") != null) profile.setPhotoFileName(resultSet.getString("photo"));

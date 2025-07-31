@@ -8,4 +8,5 @@ app:
     query-timeout: 5
     fetch-size: 0
     max-rows: 100
+    pool-size: 10
   base-content-path: D:/!MultiMedia/Pictures/GetDate/Photos/
