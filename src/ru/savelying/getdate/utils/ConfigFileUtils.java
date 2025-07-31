@@ -18,6 +18,10 @@ public class ConfigFileUtils {
         return CONFIG.getProperty(key);
     }
 
+    public static Boolean getFeatureFlag(String key) {
+        return Boolean.parseBoolean(getConfig("app.ff." + key));
+    }
+
     private static void loadConfig() {
         try (InputStream in = ConfigFileUtils.class.getClassLoader().getResourceAsStream("application.properties")) {
             CONFIG.load(in);

@@ -22,6 +22,10 @@ public class ConfigFileYaml {
         return CONFIG.get(key);
     }
 
+    public static Boolean getFeatureFlag(String key) {
+        return Boolean.parseBoolean(getConfig("app.ff." + key));
+    }
+
     private static void loadConfig() {
         try (InputStream in = ConfigFileYaml.class.getClassLoader().getResourceAsStream("application.yml")) {
             Map<String, Object> loaded = new Yaml().load(in);

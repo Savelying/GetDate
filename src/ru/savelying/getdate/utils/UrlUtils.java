@@ -17,7 +17,7 @@ public class UrlUtils {
     public static final String GETDATE_URL = "/getdate";
     public static final String MATCHES_URL = "/matches";
     public static final String REST_URL = "/api/v1";
-    public static final String BASE_CONTENT_PATH = ConfigFileUtils.getConfig("app.base.content.path");
+    public static final String BASE_CONTENT_PATH = ConfigFileUtils.getConfig("app.base-content-path");
 
     public static final Set<String> PRIVATE_PATHS = Set.of(PROFILE_URL, EMAIL_URL, REST_URL, GETDATE_URL);
 

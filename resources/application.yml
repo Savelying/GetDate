@@ -9,4 +9,6 @@ app:
     fetch-size: 0
     max-rows: 100
     pool-size: 10
+  ff:
+    use-custom-pool: false
   base-content-path: D:/!MultiMedia/Pictures/GetDate/Photos/
