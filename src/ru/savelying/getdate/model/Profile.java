@@ -19,6 +19,7 @@ public class Profile {
     Status status;
     String photoFileName;
     Role role;
+    int version = 0;
 
     @Override
     public String toString() {

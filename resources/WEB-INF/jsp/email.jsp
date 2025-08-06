@@ -13,6 +13,7 @@
                 <input type="hidden" name="_method" value="put"/>
                 <input type="hidden" name="id" value="${profile.id}">
                 <input type="hidden" name="email" value="${profile.email}">
+                <input type="hidden" name="version" value="${profile.version}">
                 <table>
                     <tr>
                         <td>${requestScope.wordBundle.getWord("email")}</td>

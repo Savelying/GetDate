@@ -28,4 +28,5 @@ public class ProfileDTO {
     Part photoImage;
     String photoFileName;
     Role role;
+    int version = 0;
 }

@@ -190,9 +190,11 @@ public class ProfileQueryBuilder {
         return new Query(queryBuilder.toString(), args);
     }
 
-    public Query build(Long id) {
-        queryBuilder.append(" where id = ?");
+    public Query build(Long id, int version) {
+        queryBuilder.append(", version = ? where id = ? and version = ?");
+        args.add(version + 1);
         args.add(id);
+        args.add(version);
         return new Query(queryBuilder.toString(), args);
     }
 }

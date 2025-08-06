@@ -10,6 +10,7 @@
 <div>
     <form method="post" action="/profile?id=${profile.id}" enctype="multipart/form-data">
         <input type="hidden" name="_method" value="PUT">
+        <input type="hidden" name="version" value="${profile.version}">
         <table>
             <tr>
                 <td>${wordBundle.getWord("profile")}(id):</td>

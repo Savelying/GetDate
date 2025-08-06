@@ -46,8 +46,8 @@ public class ProfileDAO {
     private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
     private final static String DELETE = "delete from profiles where id = ?";
     private final static String UPDATE = "update profiles set id = id";
-    private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo from profiles where '' = ''";
-    private final static String MATCHES = "select * from profiles join likes on profiles.id = likes.to_id where match = true";
+    private final static String SELECT = "select id, email, password, name, info, gender, birth_date, status, role, photo, version from profiles where '' = ''";
+    private final static String MATCHES = "select id, email, password, name, info, gender, birth_date, status, role, photo, version from profiles join likes on profiles.id = likes.to_id where match = true";
 
     //Генерируем пул профилей (юзеров)
     public void genSomeProfiles(int n) {
@@ -83,7 +83,7 @@ public class ProfileDAO {
             statement.setString(5, profile.getStatus().toString());
             statement.setString(6, profile.getRole().toString());
 
-//            statement.executeUpdate("create table profiles(id bigserial not null primary key, email varchar not null unique, password varchar not null, name varchar, info text, gender varchar, birth_date date not null, status varchar not null, role varchar not null, reg_date timestamp not null default current_timestamp)");
+//            statement.executeUpdate("create table profiles(id bigserial not null primary key, email varchar not null unique, password varchar not null, name varchar, info text, gender varchar, birth_date date not null, status varchar not null, role varchar not null, version int not null default 0, reg_date timestamp not null default current_timestamp)");
 
             int insertCount = statement.executeUpdate();
             log.debug("Insert count : {}", insertCount);
@@ -119,7 +119,7 @@ public class ProfileDAO {
                 .addBirthDate(profile.getBirthDate())
                 .addStatus(profile.getStatus())
                 .addPhoto(profile.getPhotoFileName())
-                .build(profile.getId());
+                .build(profile.getId(), profile.getVersion());
         try (Connection connection = ConnectUtils.getConnnect();
              PreparedStatement statement = getPreparedStatement(connection, query)) {
             int updateCount = statement.executeUpdate();
@@ -255,6 +255,7 @@ public class ProfileDAO {
         if (resultSet.getString("status") != null) profile.setStatus(Status.valueOf(resultSet.getString("status")));
         if (resultSet.getString("role") != null) profile.setRole(Role.valueOf(resultSet.getString("role")));
         if (resultSet.getString("photo") != null) profile.setPhotoFileName(resultSet.getString("photo"));
+        if (resultSet.getString("version") != null) profile.setVersion(resultSet.getInt("version"));
         return profile;
     }
 

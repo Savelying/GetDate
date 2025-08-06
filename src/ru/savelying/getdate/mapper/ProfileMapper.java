@@ -42,6 +42,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         profileDTO.setStatus(obj.getStatus());
         profileDTO.setPhotoFileName(obj.getPhotoFileName());
         profileDTO.setRole(obj.getRole());
+        profileDTO.setVersion(obj.getVersion());
         return profileDTO;
     }
 
@@ -58,6 +59,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (obj.getStatus() != null) profile.setStatus(obj.getStatus());
         if (obj.getRole() != null) profile.setRole(obj.getRole());
         if (obj.getPhotoFileName() != null) profile.setPhotoFileName(obj.getPhotoFileName());
+        if (obj.getVersion() > 0) profile.setVersion(obj.getVersion());
         return profile;
     }
 
@@ -76,6 +78,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (!isBlank(req.getParameter("newEmail")) && !req.getParameter("newEmail").equals(req.getParameter("email"))) profileDTO.setNewEmail(req.getParameter("newEmail"));
         if (!isBlank(req.getParameter("newPassword"))) profileDTO.setNewPassword(req.getParameter("newPassword"));
         if (!isBlank(req.getParameter("confirmPassword"))) profileDTO.setConfirmPassword(req.getParameter("confirmPassword"));
+        if (!isBlank(req.getParameter("version"))) profileDTO.setVersion(Integer.parseInt(req.getParameter("version")));
         if (req.getPart("photo") != null && !isBlank(req.getPart("photo").getSubmittedFileName())) {
             profileDTO.setPhotoImage(req.getPart("photo"));
             profileDTO.setPhotoFileName(req.getPart("photo").getSubmittedFileName());

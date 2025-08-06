@@ -80,6 +80,7 @@
                     <td>
                         <input type="hidden" name="_method" value="put"/>
                         <input type="hidden" name="id" value="${profile.id}">
+                        <input type="hidden" name="version" value="${profile.version}">
                         <select name="status" style="width: 150px">
                             <option value="${profile.status}" selected hidden>
                                 ${wordBundle.getWord(profile.status)}

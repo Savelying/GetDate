@@ -10,14 +10,16 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import javax.naming.Context;
+import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
 
 @UtilityClass
 public class ConnectUtils {
 
-    public static final String dbName = ConfigFileUtils.getConfig("app.datasource.database");
     public static final String dbURL = ConfigFileUtils.getConfig("app.datasource.url");
+    public static final String dbName = ConfigFileUtils.getConfig("app.datasource.database");
     public static final String dbUser = ConfigFileUtils.getConfig("app.datasource.username");
     public static final String dbPassword = ConfigFileUtils.getConfig("app.datasource.password");
     public static final String dbDriver = ConfigFileUtils.getConfig("app.datasource.driver");
@@ -38,13 +40,16 @@ public class ConnectUtils {
             Class.forName(dbDriver);
             dataSource = new CustomDataSource();
         } else {
-            HikariConfig hikariConfig = new HikariConfig();
-            hikariConfig.setDriverClassName(dbDriver);
-            hikariConfig.setJdbcUrl(dbURL + dbName);
-            hikariConfig.setUsername(dbUser);
-            hikariConfig.setPassword(dbPassword);
-            hikariConfig.setMaximumPoolSize(dbPoolSize);
-            dataSource = new HikariDataSource(hikariConfig);
+            Context context = new InitialContext();
+            dataSource = (DataSource) context.lookup("java:comp/env/" + "jdbc/hikariDatasource");
+//            dataSource = (DataSource) context.lookup("java:comp/env/jdbc/hikariDatasource");
+//            HikariConfig hikariConfig = new HikariConfig();
+//            hikariConfig.setDriverClassName(dbDriver);
+//            hikariConfig.setJdbcUrl(dbURL + dbName);
+//            hikariConfig.setUsername(dbUser);
+//            hikariConfig.setPassword(dbPassword);
+//            hikariConfig.setMaximumPoolSize(dbPoolSize);
+//            dataSource = new HikariDataSource(hikariConfig);
         }
     }
 
