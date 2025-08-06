@@ -33,14 +33,14 @@ public class ProfileDAO {
     //language=PostgreSQL
     private final static String SUITABLE = """
             select * from (with current_user_profile as (select id, gender, birth_date from profiles where id = ?)
-                select distinct * from profiles p
-                    cross join current_user_profile cup left join likes l on p.id = l.to_id
-                        where (l.from_id is null or l.from_id != cup.id)
+                select p.id, p.email, p.password, p.name, p.info, p.gender, p.birth_date, p.status, p.role, p.photo, p.version from profiles p
+                    cross join current_user_profile cup left join likes l on l.from_id = cup.id and p.id = l.to_id
+                        where l.from_id is null
                             and p.id != cup.id
+                            and p.status = 'ACTIVE'
                             and p.gender = case when cup.gender = 'MALE' then 'FEMALE' else 'MALE' end
                             and p.birth_date between (cup.birth_date - interval '5 years')
                                                 and (cup.birth_date + interval '5 years')
-                            and p.status = 'ACTIVE'
                         ) as alias order by random() limit ?
             """;
     private final static String INSERT = "insert into profiles(email, password, name, birth_date, status, role) VALUES (?, ?, ?, ?, ?, ?)";
@@ -195,33 +195,33 @@ public class ProfileDAO {
         }
     }
 
-    public Optional<Profile> getSuitableProfile(Long id, int limit) {
-        try (Connection connection = getConnnect();
-             PreparedStatement statement = connection.prepareStatement(SUITABLE)) {
-            statement.setLong(1, id);
-            statement.setInt(2, Math.min(limit, 1));
-            ResultSet resultSet = statement.executeQuery();
-            Profile profile = null;
-            if (resultSet.next()) profile = getProfileFromDB(resultSet);
-            return Optional.ofNullable(profile);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-//    public List<ProfileView> getSuitableProfiles(Long id, int limit) {
+//    public Optional<Profile> getSuitableProfile(Long id, int limit) {
 //        try (Connection connection = getConnnect();
 //             PreparedStatement statement = connection.prepareStatement(SUITABLE)) {
 //            statement.setLong(1, id);
 //            statement.setInt(2, Math.min(limit, 1));
 //            ResultSet resultSet = statement.executeQuery();
-//            List<ProfileView> profiles = new ArrayList<>();
-//            while (resultSet.next()) profiles.add(profileMapper.mapToView(getProfileFromDB(resultSet)));
-//            return profiles;
+//            Profile profile = null;
+//            if (resultSet.next()) profile = getProfileFromDB(resultSet);
+//            return Optional.ofNullable(profile);
 //        } catch (SQLException e) {
 //            throw new RuntimeException(e);
 //        }
 //    }
+
+    public Queue<ProfileView> getSuitableProfiles(Long id, int limit) {
+        try (Connection connection = getConnnect();
+             PreparedStatement statement = connection.prepareStatement(SUITABLE)) {
+            statement.setLong(1, id);
+            statement.setInt(2, limit);
+            ResultSet resultSet = statement.executeQuery();
+            Queue<ProfileView> profiles = new LinkedList<>();
+            while (resultSet.next()) profiles.offer(profileMapper.mapToView(getProfileFromDB(resultSet)));
+            return profiles;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     public List<Profile> getMatches(Long id, ProfileFilter profileFilter) {
         Query query = new ProfileQueryBuilder(MATCHES)
