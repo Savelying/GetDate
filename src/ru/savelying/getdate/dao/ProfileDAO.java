@@ -215,7 +215,7 @@ public class ProfileDAO {
             statement.setLong(1, id);
             statement.setInt(2, limit);
             ResultSet resultSet = statement.executeQuery();
-            Queue<ProfileView> profiles = new LinkedList<>();
+            LinkedList<ProfileView> profiles = new LinkedList<>();
             while (resultSet.next()) profiles.offer(profileMapper.mapToView(getProfileFromDB(resultSet)));
             return profiles;
         } catch (SQLException e) {

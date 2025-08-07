@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebListener;
 import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
+import ru.savelying.getdate.utils.ConnectRedis;
 import ru.savelying.getdate.utils.ConnectUtils;
 
 import java.util.List;
@@ -23,5 +24,6 @@ public class AppContextListener implements ServletContextListener {
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         ConnectUtils.closePool();
+        ConnectRedis.closePool();
     }
 }

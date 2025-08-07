@@ -11,4 +11,8 @@ app:
     pool-size: 10
   ff:
     use-custom-pool: false
+  redis:
+    host: localhost
+    port: 6379
+    exp: 86400
   base-content-path: D:/!MultiMedia/Pictures/GetDate/Photos/

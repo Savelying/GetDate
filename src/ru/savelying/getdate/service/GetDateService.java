@@ -18,6 +18,7 @@ public class GetDateService {
     private final LikeDAO likeDAO = LikeDAO.getInstance();
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
+    private final ProfilesCacheService profilesCacheService = ProfilesCacheService.getInstance();
     private final ConcurrentHashMap<Long, Queue<ProfileView>> profilesCache = new ConcurrentHashMap<>();
 
     @Getter
@@ -30,11 +31,12 @@ public class GetDateService {
 
     public Optional<ProfileView> setNext(LikeDTO likeDTO) {
         if (likeDTO.getAction() != Action.SKIP) likeDAO.writeLike(likeDTO);
-        Queue<ProfileView> profilesQueue = profilesCache.get(likeDTO.getFromId());
-        if (profilesQueue == null || profilesQueue.isEmpty()) {
-            profilesQueue = profileDAO.getSuitableProfiles(likeDTO.getFromId(), 3);
-            profilesCache.put(likeDTO.getFromId(), profilesQueue);
+        ProfileView profileView = profilesCacheService.setNext(likeDTO.getFromId());
+        if (profileView == null) {
+            Queue<ProfileView> profilesQueue = profileDAO.getSuitableProfiles(likeDTO.getFromId(), 5);
+            profileView = profilesQueue.poll();
+            profilesCacheService.setQueue(likeDTO.getFromId(), profilesQueue);
         }
-        return Optional.ofNullable(profilesQueue.poll());
+        return Optional.ofNullable(profileView);
     }
 }

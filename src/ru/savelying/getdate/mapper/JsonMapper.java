@@ -3,6 +3,8 @@ package ru.savelying.getdate.mapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.Getter;
+import lombok.SneakyThrows;
+import ru.savelying.getdate.dto.ProfileView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,5 +32,14 @@ public class JsonMapper {
 
     public <T> T readValue(Reader src, Class<T> valueType) throws IOException {
         return objectMapper.readValue(src, valueType);
+    }
+
+    public <T> T readValue(String src, Class<T> valueType) throws IOException {
+        return objectMapper.readValue(src, valueType);
+    }
+
+    @SneakyThrows
+    public String writeValueAsString(ProfileView profileView) {
+        return objectMapper.writeValueAsString(profileView);
     }
 }
