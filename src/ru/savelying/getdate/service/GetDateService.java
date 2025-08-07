@@ -18,7 +18,7 @@ public class GetDateService {
     private final LikeDAO likeDAO = LikeDAO.getInstance();
     private final ProfileDAO profileDAO = ProfileDAO.getInstance();
     private final ProfileMapper profileMapper = ProfileMapper.getInstance();
-    private final ProfilesCacheService profilesCacheService = ProfilesCacheService.getInstance();
+    private final CacheService profilesCacheService = CacheService.getInstance();
     private final ConcurrentHashMap<Long, Queue<ProfileView>> profilesCache = new ConcurrentHashMap<>();
 
     @Getter

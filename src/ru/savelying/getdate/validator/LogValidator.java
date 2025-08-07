@@ -5,6 +5,7 @@ import lombok.NoArgsConstructor;
 import ru.savelying.getdate.dao.ProfileDAO;
 import ru.savelying.getdate.dto.ProfileDTO;
 import ru.savelying.getdate.model.Profile;
+import ru.savelying.getdate.utils.PasswordUtils;
 
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ public class LogValidator {
             result.addError("error.email.invalid");
         else if (profile.isEmpty())
             result.addError("error.email.not.found");
-        else if (isBlank(profileDTO.getPassword()) || !profileDTO.getPassword().equals(profile.get().getPassword()))
+        else if (isBlank(profileDTO.getPassword()) || !PasswordUtils.checkPassword(profileDTO.getPassword(), profile.get().getPassword()))
             result.addError("error.password.invalid");
         return result;
     }

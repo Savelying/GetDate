@@ -11,6 +11,7 @@ import ru.savelying.getdate.dto.ProfileView;
 import ru.savelying.getdate.mapper.ProfileMapper;
 import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
+import ru.savelying.getdate.utils.PasswordUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +64,7 @@ public class ProfileService {
 
     public Optional<ProfileDTO> login(ProfileDTO profileDTO) {
         return profileDAO.getProfileByEmail(profileDTO.getEmail())
-                .filter(profile -> profile.getPassword().equals(profileDTO.getPassword()))
+                .filter(profile -> PasswordUtils.checkPassword(profileDTO.getPassword(), profile.getPassword()))
                 .map(profileMapper::mapToDTO);
     }
 

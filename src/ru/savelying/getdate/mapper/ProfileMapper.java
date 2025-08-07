@@ -14,6 +14,7 @@ import ru.savelying.getdate.model.Gender;
 import ru.savelying.getdate.model.Profile;
 import ru.savelying.getdate.model.Role;
 import ru.savelying.getdate.model.Status;
+import ru.savelying.getdate.utils.PasswordUtils;
 
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +53,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (obj.getId() != null) profile.setId(obj.getId());
         if (obj.getName() != null) profile.setName(obj.getName());
         if (obj.getEmail() != null) profile.setEmail(obj.getEmail());
-        if (obj.getPassword() != null) profile.setPassword(obj.getPassword());
+        if (obj.getPassword() != null) profile.setPassword(PasswordUtils.generatePassword(obj.getPassword()));
         if (obj.getInfo() != null) profile.setInfo(obj.getInfo());
         if (obj.getGender() != null) profile.setGender(obj.getGender());
         if (obj.getBirthDate() != null) profile.setBirthDate(obj.getBirthDate());

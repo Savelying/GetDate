@@ -9,17 +9,14 @@ import ru.savelying.getdate.dto.ProfileView;
 import ru.savelying.getdate.mapper.JsonMapper;
 import ru.savelying.getdate.utils.ConnectRedis;
 
-import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static ru.savelying.getdate.utils.ConnectRedis.EXP;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ProfilesCacheService {
+public class CacheService {
 
     @Getter
-    private final static ProfilesCacheService instance = new ProfilesCacheService();
+    private final static CacheService instance = new CacheService();
     private final JsonMapper jsonMapper = JsonMapper.getInstance();
     private final ConcurrentHashMap<Long, Queue<ProfileView>> profilesCache = new ConcurrentHashMap<>();
 
