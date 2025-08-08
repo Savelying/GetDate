@@ -73,7 +73,7 @@ public class ProfileMapper implements Mapper<Profile, ProfileDTO> {
         if (!isBlank(req.getParameter("name"))) profileDTO.setName(req.getParameter("name"));
         if (!isBlank(req.getParameter("info"))) profileDTO.setInfo(req.getParameter("info"));
         if (!isBlank(req.getParameter("gender"))) profileDTO.setGender(Gender.valueOf(req.getParameter("gender")));
-        if (req.getParameter("birthDate") != null && !isBlank(req.getParameter("birthDate"))) profileDTO.setBirthDate(LocalDate.parse(req.getParameter("birthDate")));
+        if (!isBlank(req.getParameter("birthDate"))) profileDTO.setBirthDate(LocalDate.parse(req.getParameter("birthDate")));
         if (!isBlank(req.getParameter("status"))) profileDTO.setStatus(Status.valueOf(req.getParameter("status")));
         if (!isBlank(req.getParameter("role"))) profileDTO.setRole(Role.valueOf(req.getParameter("role")));
         if (!isBlank(req.getParameter("newEmail")) && !req.getParameter("newEmail").equals(req.getParameter("email"))) profileDTO.setNewEmail(req.getParameter("newEmail"));

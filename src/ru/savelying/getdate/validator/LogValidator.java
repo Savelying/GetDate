@@ -20,12 +20,16 @@ public class LogValidator {
     public ValidationResult validate(ProfileDTO profileDTO) {
         Optional<Profile> profile = profileDAO.getProfileByEmail(profileDTO.getEmail());
         ValidationResult result = new ValidationResult();
-        if (isBlank(profileDTO.getEmail()) || !VALID_EMAIL_ADDRESS_REGEX.matcher(profileDTO.getEmail()).matches())
+
+        if (isBlank(profileDTO.getEmail()) || !VALID_EMAIL_ADDRESS_REGEX.matcher(profileDTO.getEmail()).matches()) {
             result.addError("error.email.invalid");
-        else if (profile.isEmpty())
+        } else if (profile.isEmpty()) {
             result.addError("error.email.not.found");
-        else if (isBlank(profileDTO.getPassword()) || !PasswordUtils.checkPassword(profileDTO.getPassword(), profile.get().getPassword()))
-            result.addError("error.password.invalid");
+        } else {
+            if (isBlank(profileDTO.getPassword()) || !PasswordUtils.checkPassword(profileDTO.getPassword(), profile.get().getPassword()))
+                result.addError("error.password.invalid");
+        }
+
         return result;
     }
 }

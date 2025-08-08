@@ -21,11 +21,11 @@
                     </tr>
                     <tr>
                         <td>${wordBundle.getWord("password")}</td>
-                        <td><input type="password" name="password"></td>
+                        <td><input type="password" name="password" value="${profile.password}"></td>
                     </tr>
                     <tr>
                         <td>${wordBundle.getWord("password-new")}</td>
-                        <td><input type="password" name="newPassword"></td>
+                        <td><input type="password" name="newPassword" value="${profile.newPassword}"></td>
                     </tr>
                     <tr>
                         <td>${wordBundle.getWord("password-confirm")}</td>
